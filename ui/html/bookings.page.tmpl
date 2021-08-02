@@ -1,0 +1,51 @@
+{{template "base" .}}
+
+{{define "title"}}Bookings{{end}}
+
+{{define "main"}}
+    <h2>Buchungen</h2>
+                    <a href='/booking/create'>Buchung anlegen</a>
+    {{if .Bookings}}
+    <table>
+        <tr>
+            <th>Nr</th>
+            <th>Kunde</th>
+            <th>Anzahl Gäste</th>
+            <th>Provider</th>
+            <th>Von</th>
+            <th>Bis</th>
+            <th>Tage</th>
+            <th>Preis pro Tag</th>
+            <th>Provision</th>
+            <th>Provision in Prozent</th>
+
+            <th>Reinigungskosten</th>
+            <th>Gesamt (Preis pro Tag * Tage) </th>
+            <th>Angelegt am</th>
+            <th>Geaendert am</th>
+            <th>Edit</th>
+        </tr>
+        {{range .Bookings}}
+        <tr>
+            <td><a href='/booking/{{.ID}}'>{{.ID}}</a></td>
+            <td>{{ .Customer.NameAnschrift}}</td>
+            <td>{{ .NumberOfGuests}}</td>
+            <td>{{ .Provider}}</td>
+            <td>{{humanDate .StartDate}}</td>
+            <td>{{humanDate .EndDate}}</td>
+            <td>{{ .Days}}</td>
+            <td>{{ .PricePerDay.Display}}</td>
+            <td>{{ .Provision.Display}}</td>
+            <td>{{ .ProvisionInPercentOfTotal}}</td>
+            <td>{{ .CleaningPrice.Display}}</td>
+            <td>{{displayMoney .Total}}</td>
+            <td>{{humanDate .CreatedAt}}</td>
+            <td>{{humanDate .ModifiedAt}}</td>
+            <td><a href='/booking/edit/{{.ID}}'>edit</a></td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There's nothing to see here yet!</p>
+    {{end}}
+{{end}}

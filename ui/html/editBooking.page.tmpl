@@ -1,0 +1,23 @@
+{{template "base" .}}
+
+{{define "title"}}Buchung editieren{{end}}
+
+{{define "main"}}
+<form action='/booking/edit' method='POST'>
+    <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+    {{with .Form}}
+    <div>
+
+        {{template "bookingForm" .}}
+        <input type='hidden' name='id' value='{{.Get "id"}}'>
+
+    </div>
+    <div>
+        <input type='submit' value='Speichern'>
+    </div>
+    {{end}}
+</form>
+            <div>
+                <a href='/bookings?year=2021'class="button">Cancel</a>
+            </div>
+{{end}}

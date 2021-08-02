@@ -1,0 +1,37 @@
+{{define "base"}}
+<!doctype html>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8'>
+        <title>{{template "title" .}} - Preed</title>
+
+        <link rel='stylesheet' href='/static/css/main.css'>
+        <link rel='shortcut icon' href='/static/img/favicon.ico' type='image/x-icon'>
+        <!-- Also link to some fonts hosted by Google -->
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700'>
+
+    </head>
+    <body>
+        <header>
+            <h1><a href='/'>Preed</a></h1>
+        </header>
+        <nav>
+            <div>
+                <a href='/bookings?year=2020'>Übersicht 2020</a>
+                <a href='/bookings?year=2021'>Übersicht 2021</a>
+                <a href='/statistics'>Statistik</a>
+            </div>
+            <div>
+                <a href='/ledger'>Ledger</a>
+                <a href='/price-table'>Preistabelle</a>
+            </div>
+
+        </nav>
+        <main>
+            {{template "main" .}}
+        </main>
+            {{template "footer" .}}
+        <script src="/static/js/main.js" type="text/javascript"></script>
+    </body>
+</html>
+{{end}}
