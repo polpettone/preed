@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 docker run --rm \
 	--name preed-db \
 	-e POSTGRES_USER=preed \
