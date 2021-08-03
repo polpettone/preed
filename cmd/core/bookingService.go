@@ -57,3 +57,7 @@ func (bookingService *BookingService) CreateBooking(booking *models.Booking) err
 	booking.ModifiedAt = time.Now()
 	return bookingService.Repo.SaveBooking(booking)
 }
+
+func (bookingService *BookingService) DeleteBooking(booking *models.Booking) error {
+	return bookingService.Repo.DeleteBooking(booking)
+}

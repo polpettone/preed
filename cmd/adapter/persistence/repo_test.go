@@ -18,6 +18,29 @@ func checkError(t *testing.T, err error, contextText string) {
 	}
 }
 
+func Test_should_delete_booking(t *testing.T) {
+
+	repo, postgres := startDB(t)
+	defer stopDB(postgres, t)
+
+	booking0 := adapter.TestBooking("n0", "c0", "p0", "i0")
+	err := repo.SaveBooking(booking0)
+	checkError(t, err, "Save booking error")
+	foundBooking0, err := repo.FindBookingById(booking0.ID)
+	if foundBooking0 == nil {
+		t.Errorf("wanted %v but got nil", booking0)
+	}
+
+	err = repo.DeleteBooking(booking0)
+	checkError(t, err, "Delete booking error")
+
+	notExistingBooking, err := repo.FindBookingById(booking0.ID)
+	if notExistingBooking != nil {
+		t.Errorf("wanted nil but got %v", notExistingBooking)
+	}
+
+}
+
 func Test_should_save_booking_with_same_nameAnschrift(t *testing.T) {
 
 	repo, postgres := startDB(t)
