@@ -21,6 +21,7 @@
 
             <th>Reinigungskosten</th>
             <th>Gesamt (Preis pro Tag * Tage) </th>
+            <th>Gesamt minus Provision </th>
             <th>Angelegt am</th>
             <th>Geaendert am</th>
             <th>Edit</th>
@@ -40,7 +41,9 @@
             <td>{{ .Provision.Display}}</td>
             <td>{{ .ProvisionInPercentOfTotal}}</td>
             <td>{{ .CleaningPrice.Display}}</td>
+
             <td>{{displayMoney .Total}}</td>
+            <td>{{displayMoney .TotalMinusProvision}}</td>
             <td>{{humanDate .CreatedAt}}</td>
             <td>{{humanDate .ModifiedAt}}</td>
             <td><a href='/booking/edit/{{.ID}}'>edit</a></td>

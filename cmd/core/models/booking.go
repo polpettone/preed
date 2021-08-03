@@ -53,6 +53,13 @@ func (b *Booking) Total() money.Money {
 	return *b.PricePerDay.Multiply(int64(b.Days()))
 }
 
+func (b *Booking) TotalMinusProvision() money.Money {
+	total := *b.PricePerDay.Multiply(int64(b.Days()))
+	totalMinusProvision, _ := total.Subtract(&b.Provision)
+	return *totalMinusProvision
+}
+
+
 func (b *Booking) ProvisionInPercentOfTotal() float64 {
 	total := b.Total()
 	if total.Amount() == 0 {
