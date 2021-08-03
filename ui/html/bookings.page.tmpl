@@ -24,6 +24,8 @@
             <th>Angelegt am</th>
             <th>Geaendert am</th>
             <th>Edit</th>
+            <th>Delete</th>
+
         </tr>
         {{range .Bookings}}
         <tr>
@@ -42,6 +44,7 @@
             <td>{{humanDate .CreatedAt}}</td>
             <td>{{humanDate .ModifiedAt}}</td>
             <td><a href='/booking/edit/{{.ID}}'>edit</a></td>
+            <td><a href='/booking/delete/{{.ID}}'>delete</a></td>
         </tr>
         {{end}}
     </table>
