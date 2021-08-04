@@ -20,7 +20,7 @@ func (app *Application) NewInitCmd() *cobra.Command {
 
 func (app *Application) handleInitCommand() {
 
-	app.Logging.Stdout.Printf("init")
+	app.Logging.InfoLog.Printf("init")
 
 	repo := persistence.NewRepo(app.Logging,
 		app.DBPort,
@@ -28,10 +28,10 @@ func (app *Application) handleInitCommand() {
 		app.DBPassword,
 		app.DBName)
 
-		app.Logging.Stdout.Printf("Create Schema")
+		app.Logging.InfoLog.Printf("Create Schema")
 		err := repo.CreateSchema()
 		if err != nil {
-			app.Logging.Stdout.Printf("%v", err)
+			app.Logging.ErrorLog.Printf("%v", err)
 		}
 }
 

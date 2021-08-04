@@ -174,7 +174,7 @@ func (repo *Repo) InitMigration() error {
 		return err
 	}
 
-	repo.Logging.Stdout.Printf("DB Init Migrations: old %d -> new %d", oldVersion, newVersion)
+	repo.Logging.InfoLog.Printf("DB Init Migrations: old %d -> new %d", oldVersion, newVersion)
 
 	return nil
 }
@@ -190,6 +190,6 @@ func (repo *Repo) RunMigration() error {
 		return err
 	}
 
-	repo.Logging.Stdout.Printf("DB Migration: old %d -> new %d", oldVersion, newVersion)
+	repo.Logging.InfoLog.Printf("DB Migration: old %d -> new %d", oldVersion, newVersion)
 	return nil
 }

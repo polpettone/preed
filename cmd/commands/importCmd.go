@@ -23,7 +23,7 @@ func (app *Application) NewImportCmd() *cobra.Command {
 func (app *Application) handleImportCommand(cobraCommand *cobra.Command) {
 	initial, _ := cobraCommand.Flags().GetBool("initial")
 
-	app.Logging.Stdout.Printf("import")
+	app.Logging.InfoLog.Printf("import")
 
 	repo := persistence.NewRepo(app.Logging,
 		app.DBPort,
@@ -32,24 +32,24 @@ func (app *Application) handleImportCommand(cobraCommand *cobra.Command) {
 		app.DBName)
 
 	if initial {
-		app.Logging.Stdout.Printf("Create Schema")
+		app.Logging.InfoLog.Printf("Create Schema")
 		err := repo.CreateSchema()
 		if err != nil {
-			app.Logging.Stdout.Printf("%v", err)
+			app.Logging.ErrorLog.Printf("%v", err)
 		}
 	}
 
 	pathToCSV := "add path to csv"
 	rawBookings, err := importer.ReadCSV(pathToCSV)
 	if err != nil {
-		app.Logging.Stdout.Printf("%v", err)
+		app.Logging.ErrorLog.Printf("%v", err)
 	}
 	bookingService := core.NewBookingService(*repo)
 	bookings, _ := importer.ConvertRawBookingsToBooking(rawBookings)
 	for _, b := range bookings {
 		err = bookingService.CreateBooking(b)
 		if err != nil {
-			app.Logging.Stdout.Printf("%v", err)
+			app.Logging.ErrorLog.Printf("%v", err)
 		}
 	}
 }
