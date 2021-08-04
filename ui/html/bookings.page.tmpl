@@ -30,6 +30,7 @@
             <th>Edit</th>
             <th>Delete</th>
             <th>Cancel</th>
+            <th>Reset Cancellation</th>
 
         </tr>
         {{range .Bookings}}
@@ -56,6 +57,7 @@
             <td><a href='/booking/edit/{{.ID}}'>edit</a></td>
             <td><a href='/booking/delete/{{.ID}}'>delete</a></td>
             <td><a href='/booking/cancel/{{.ID}}'>cancel</a></td>
+            <td><a href='/booking/reset-cancellation/{{.ID}}'>reset cancellation</a></td>
         </tr>
         {{end}}
     </table>

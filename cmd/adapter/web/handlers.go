@@ -177,6 +177,52 @@ func (app *WebApp) cancelBookingForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (app *WebApp) resetBookingCancellation(w http.ResponseWriter, r *http.Request) {
+
+	err := parseForm(w, r, app)
+	if err != nil {
+		return
+	}
+
+	bookingID, err := getBookingIDFromForm(w, r, app)
+	if err != nil {
+		return
+	}
+
+	b, err := getBookingByID(w, *bookingID, app)
+	if err != nil {
+		return
+	}
+
+	err = app.BookingService.ResetCancellationOfBooking(b)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/bookings?year=2021"), http.StatusSeeOther)
+}
+
+func (app *WebApp) resetBookingCancellationForm(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
+	if err != nil || id < 1 {
+		app.notFound(w)
+		return
+	}
+
+	b, err := getBookingByID(w, int64(id), app)
+	if err != nil {
+		return
+	}
+
+	data := url.Values{}
+	form := forms.New(data)
+	form.Set("id", strconv.Itoa(int(b.ID)))
+
+	app.render(w, r, "resetBookingCancellation.page.tmpl", &templateData{
+		Form: form,
+	})
+}
+
 func (app *WebApp) showBooking(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
