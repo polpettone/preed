@@ -3,6 +3,7 @@ package web
 import (
 	"errors"
 	"fmt"
+	converter2 "github.com/polpettone/preed/cmd/adapter/web/converter"
 	"github.com/polpettone/preed/cmd/core/models"
 	"github.com/polpettone/preed/pkg/forms"
 	"net/http"
@@ -271,9 +272,9 @@ func (app *WebApp) createBooking(w http.ResponseWriter, r *http.Request) {
 
 	app.Session.Put(r, "flash", "Buchung erfolgreich angelegt")
 
-	converter := NewFormToBookingConverter()
+	converter := converter2.NewFormToBookingConverter()
 
-	booking, err := converter.convertFormToBooking(*form, *models.NewBooking())
+	booking, err := converter.ConvertFormToBooking(*form, *models.NewBooking())
 	if err != nil {
 		app.ErrorLog.Printf("%v", err)
 	}
@@ -298,8 +299,8 @@ func (app *WebApp) editBookingForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	converter := NewFormToBookingConverter()
-	form := converter.convertBookingToForm(*b)
+	converter := converter2.NewFormToBookingConverter()
+	form := converter.ConvertBookingToForm(*b)
 
 	app.InfoLog.Printf("%v", form.Values)
 
@@ -340,7 +341,7 @@ func (app *WebApp) editBooking(w http.ResponseWriter, r *http.Request) {
 
 	app.Session.Put(r, "flash", "Buchung erfolgreich geaendert")
 
-	converter := NewFormToBookingConverter()
+	converter := converter2.NewFormToBookingConverter()
 
 	bookingID, err := getBookingIDFromForm(w, r, app)
 	if err != nil {
@@ -351,7 +352,7 @@ func (app *WebApp) editBooking(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	booking, err := converter.convertFormToBooking(*form, *b)
+	booking, err := converter.ConvertFormToBooking(*form, *b)
 	if err != nil {
 		app.ErrorLog.Printf("%v", err)
 	}

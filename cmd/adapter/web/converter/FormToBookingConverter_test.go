@@ -1,4 +1,4 @@
-package web
+package converter
 
 import (
 	"github.com/polpettone/preed/cmd/core/models"
@@ -32,7 +32,7 @@ func TestFormToBookingConverter_convertFormToBooking(t *testing.T) {
 				form forms.Form
 				booking models.Booking
 			}{
-				form: validDateForm(),
+				form:    validDateForm(),
 				booking: *models.NewBooking(),
 			},
 
@@ -45,13 +45,13 @@ func TestFormToBookingConverter_convertFormToBooking(t *testing.T) {
 			converter := FormToBookingConverter{
 				TimeFormat: tt.fields.TimeFormat,
 			}
-			got, err := converter.convertFormToBooking(tt.args.form, tt.args.booking)
+			got, err := converter.ConvertFormToBooking(tt.args.form, tt.args.booking)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("convertFormToBooking() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ConvertFormToBooking() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("convertFormToBooking() got = %v, want %v", got, tt.want)
+				t.Errorf("ConvertFormToBooking() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

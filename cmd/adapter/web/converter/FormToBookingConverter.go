@@ -1,4 +1,4 @@
-package web
+package converter
 
 import (
 	money2 "github.com/Rhymond/go-money"
@@ -19,7 +19,7 @@ type FormToBookingConverter struct {
 	TimeFormat string
 }
 
-func (converter FormToBookingConverter) convertFormToBooking(form forms.Form, booking models.Booking) (*models.Booking, error) {
+func (converter FormToBookingConverter) ConvertFormToBooking(form forms.Form, booking models.Booking) (*models.Booking, error) {
 
 
 	booking.Customer.NameAnschrift = form.Get("nameAnschrift")
@@ -52,7 +52,7 @@ func (converter FormToBookingConverter) convertFormToBooking(form forms.Form, bo
 	return &booking, nil
 }
 
-func (converter FormToBookingConverter) convertBookingToForm(booking models.Booking) forms.Form {
+func (converter FormToBookingConverter) ConvertBookingToForm(booking models.Booking) forms.Form {
 	data := url.Values{}
 	form := forms.New(data)
 
