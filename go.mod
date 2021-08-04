@@ -6,6 +6,7 @@ require (
 	github.com/Rhymond/go-money v1.0.1
 	github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f
 	github.com/fergusstrange/embedded-postgres v1.1.0
+	github.com/go-pg/migrations/v8 v8.1.0
 	github.com/go-pg/pg/v10 v10.4.0
 	github.com/gocarina/gocsv v0.0.0-20200925213129-04be9ee2e1a2
 	github.com/golangcollege/sessions v1.2.0

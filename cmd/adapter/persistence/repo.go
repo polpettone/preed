@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"github.com/go-pg/migrations/v8"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 	"github.com/polpettone/preed/cmd/config"
@@ -160,4 +161,20 @@ func (repo *Repo) FindCustomerById(id int64) (*models2.Customer, error) {
 	}
 
 	return customer, nil
+}
+
+func (repo *Repo) RunMigration() error {
+	db := pg.Connect(repo.DBOptions)
+	defer db.Close()
+
+	oldVersion, newVersion, err := migrations.Run(db, "version")
+
+	if err != nil {
+		return err
+	}
+
+	repo.Logging.Stdout.Printf("old %d", oldVersion)
+	repo.Logging.Stdout.Printf("new %d", newVersion)
+
+	return nil
 }
