@@ -12,22 +12,22 @@ import (
 	"strconv"
 )
 
-func (app *WebApp) home(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) Home(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "main.page.tmpl", &templateData{
 	})
 }
 
-func (app *WebApp) showLedger(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "ledger.page.tmpl", &templateData{
 	})
 }
 
-func (app *WebApp) showPriceTable(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) ShowPriceTable(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "price-table.page.tmpl", &templateData{
 	})
 }
 
-func (app *WebApp) showStatistics(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) ShowStatistics(w http.ResponseWriter, r *http.Request) {
 
 	bookings, err := getBookingsForYear(w, r, app)
 	if err != nil {
@@ -41,7 +41,7 @@ func (app *WebApp) showStatistics(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *WebApp) bookingOverview(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) BookingOverview(w http.ResponseWriter, r *http.Request) {
 
 	bookings, err := getBookingsForYear(w, r, app)
 	if err != nil {
@@ -59,7 +59,7 @@ func (app *WebApp) bookingOverview(w http.ResponseWriter, r *http.Request) {
 
 
 
-func (app *WebApp) uploadFileForBooking(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) UploadFileForBooking(w http.ResponseWriter, r *http.Request) {
 	file, handler, err := r.FormFile("file")
 	if err != nil {
 		app.ErrorLog.Println("Error Retrieving the File")
@@ -72,12 +72,12 @@ func (app *WebApp) uploadFileForBooking(w http.ResponseWriter, r *http.Request) 
 	app.InfoLog.Printf("MIME Header: %+v\n", handler.Header)
 }
 
-func (app *WebApp) uploadFileForBookingForm(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) UploadFileForBookingForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "upload.page.tmpl", &templateData{
 	})
 }
 
-func (app *WebApp) deleteBooking(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) DeleteBooking(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
 	if err != nil {
@@ -102,7 +102,7 @@ func (app *WebApp) deleteBooking(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/bookings?year=2021"), http.StatusSeeOther)
 }
 
-func (app *WebApp) deleteBookingForm(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) DeleteBookingForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
@@ -123,7 +123,7 @@ func (app *WebApp) deleteBookingForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *WebApp) cancelBooking(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) CancelBooking(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
 	if err != nil {
@@ -148,7 +148,7 @@ func (app *WebApp) cancelBooking(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/bookings?year=2021"), http.StatusSeeOther)
 }
 
-func (app *WebApp) cancelBookingForm(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) CancelBookingForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
@@ -169,7 +169,7 @@ func (app *WebApp) cancelBookingForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *WebApp) resetBookingCancellation(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) ResetBookingCancellation(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
 	if err != nil {
@@ -194,7 +194,7 @@ func (app *WebApp) resetBookingCancellation(w http.ResponseWriter, r *http.Reque
 	http.Redirect(w, r, fmt.Sprintf("/bookings?year=2021"), http.StatusSeeOther)
 }
 
-func (app *WebApp) resetBookingCancellationForm(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) ResetBookingCancellationForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
@@ -215,7 +215,7 @@ func (app *WebApp) resetBookingCancellationForm(w http.ResponseWriter, r *http.R
 	})
 }
 
-func (app *WebApp) showBooking(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) ShowBooking(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
@@ -232,13 +232,13 @@ func (app *WebApp) showBooking(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *WebApp) createBookingForm(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) CreateBookingForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "createBooking.page.tmpl", &templateData{
 		Form: forms.New(nil),
 	})
 }
 
-func (app *WebApp) createBooking(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) CreateBooking(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
 	if err != nil {
@@ -287,7 +287,7 @@ func (app *WebApp) createBooking(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/bookings"), http.StatusSeeOther)
 }
 
-func (app *WebApp) editBookingForm(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) EditBookingForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
@@ -309,7 +309,7 @@ func (app *WebApp) editBookingForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *WebApp) editBooking(w http.ResponseWriter, r *http.Request) {
+func (app *WebApp) EditBooking(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
 	if err != nil {

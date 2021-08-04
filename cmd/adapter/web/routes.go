@@ -13,31 +13,31 @@ func (app *WebApp) routes() http.Handler {
 	dynamicMiddleware := alice.New(app.Session.Enable, noSurf)
 
 	mux := pat.New()
-	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
+	mux.Get("/", dynamicMiddleware.ThenFunc(app.Home))
 
-	mux.Get("/bookings", dynamicMiddleware.ThenFunc(app.bookingOverview))
-	mux.Get("/booking/create", dynamicMiddleware.ThenFunc(app.createBookingForm))
-	mux.Post("/booking/create", dynamicMiddleware.ThenFunc(app.createBooking))
-	mux.Get("/booking/edit/:id", dynamicMiddleware.ThenFunc(app.editBookingForm))
-	mux.Post("/booking/edit", dynamicMiddleware.ThenFunc(app.editBooking))
-	mux.Get("/booking/:id", dynamicMiddleware.ThenFunc(app.showBooking))
+	mux.Get("/bookings", dynamicMiddleware.ThenFunc(app.BookingOverview))
+	mux.Get("/booking/create", dynamicMiddleware.ThenFunc(app.CreateBookingForm))
+	mux.Post("/booking/create", dynamicMiddleware.ThenFunc(app.CreateBooking))
+	mux.Get("/booking/edit/:id", dynamicMiddleware.ThenFunc(app.EditBookingForm))
+	mux.Post("/booking/edit", dynamicMiddleware.ThenFunc(app.EditBooking))
+	mux.Get("/booking/:id", dynamicMiddleware.ThenFunc(app.ShowBooking))
 
-	mux.Get("/booking/delete/:id", dynamicMiddleware.ThenFunc(app.deleteBookingForm))
-	mux.Post("/booking/delete", dynamicMiddleware.ThenFunc(app.deleteBooking))
+	mux.Get("/booking/delete/:id", dynamicMiddleware.ThenFunc(app.DeleteBookingForm))
+	mux.Post("/booking/delete", dynamicMiddleware.ThenFunc(app.DeleteBooking))
 
-	mux.Get("/booking/cancel/:id", dynamicMiddleware.ThenFunc(app.cancelBookingForm))
-	mux.Post("/booking/cancel", dynamicMiddleware.ThenFunc(app.cancelBooking))
+	mux.Get("/booking/cancel/:id", dynamicMiddleware.ThenFunc(app.CancelBookingForm))
+	mux.Post("/booking/cancel", dynamicMiddleware.ThenFunc(app.CancelBooking))
 
-	mux.Get("/booking/reset-cancellation/:id", dynamicMiddleware.ThenFunc(app.resetBookingCancellationForm))
-	mux.Post("/booking/reset-cancellation", dynamicMiddleware.ThenFunc(app.resetBookingCancellation))
+	mux.Get("/booking/reset-cancellation/:id", dynamicMiddleware.ThenFunc(app.ResetBookingCancellationForm))
+	mux.Post("/booking/reset-cancellation", dynamicMiddleware.ThenFunc(app.ResetBookingCancellation))
 
-	mux.Get("/upload", dynamicMiddleware.ThenFunc(app.uploadFileForBookingForm))
-	mux.Post("/upload", dynamicMiddleware.ThenFunc(app.uploadFileForBooking))
+	mux.Get("/upload", dynamicMiddleware.ThenFunc(app.UploadFileForBookingForm))
+	mux.Post("/upload", dynamicMiddleware.ThenFunc(app.UploadFileForBooking))
 
 
-	mux.Get("/ledger", dynamicMiddleware.ThenFunc(app.showLedger))
-	mux.Get("/price-table", dynamicMiddleware.ThenFunc(app.showPriceTable))
-	mux.Get("/statistics", dynamicMiddleware.ThenFunc(app.showStatistics))
+	mux.Get("/ledger", dynamicMiddleware.ThenFunc(app.ShowLedger))
+	mux.Get("/price-table", dynamicMiddleware.ThenFunc(app.ShowPriceTable))
+	mux.Get("/statistics", dynamicMiddleware.ThenFunc(app.ShowStatistics))
 
 
 
