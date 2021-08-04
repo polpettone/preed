@@ -64,6 +64,7 @@ func (repo *Repo) SaveBooking(booking *models2.Booking) error {
 		Set("provision = EXCLUDED.provision").
 		Set("provider = EXCLUDED.provider").
 		Set("item = EXCLUDED.item").
+		Set("canceled = EXCLUDED.canceled").
 		Insert()
 	if err != nil {
 		return err
