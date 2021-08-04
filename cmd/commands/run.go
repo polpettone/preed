@@ -33,6 +33,19 @@ func (app *Application) handleRunCommand() {
 	}
 
 	app.Logging.InfoLog.Printf("run command")
+	app.Logging.InfoLog.Printf("run migrations")
+
+	err := repo.InitMigration()
+	if err != nil {
+		app.Logging.ErrorLog.Println("%v", err)
+	}
+
+	err = repo.RunMigration()
+	if err != nil {
+		app.Logging.ErrorLog.Println("%v", err)
+	}
+
+
 
 	web.StartWebAppServer(app.Logging, bookingService)
 }

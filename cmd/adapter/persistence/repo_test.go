@@ -5,11 +5,6 @@ import (
 	"testing"
 )
 
-func checkError(t *testing.T, err error, contextText string) {
-	if err != nil {
-		t.Errorf("%s %v", contextText, err)
-	}
-}
 
 func Test_should_delete_booking(t *testing.T) {
 

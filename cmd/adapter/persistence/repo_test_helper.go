@@ -39,3 +39,9 @@ func stopDB(postgres *embeddedpostgres.EmbeddedPostgres, t *testing.T) {
 		t.Errorf("Error %v stop embedded db", err)
 	}
 }
+
+func checkError(t *testing.T, err error, contextText string) {
+	if err != nil {
+		t.Errorf("%s %v", contextText, err)
+	}
+}

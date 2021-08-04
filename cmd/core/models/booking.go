@@ -39,6 +39,8 @@ type Booking struct {
 
 	CreatedAt time.Time
 	ModifiedAt time.Time
+
+	Canceled bool
 }
 
 func (b *Booking) String() string {

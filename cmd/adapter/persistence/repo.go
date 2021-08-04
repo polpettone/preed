@@ -163,18 +163,32 @@ func (repo *Repo) FindCustomerById(id int64) (*models2.Customer, error) {
 	return customer, nil
 }
 
-func (repo *Repo) RunMigration() error {
+func (repo *Repo) InitMigration() error {
 	db := pg.Connect(repo.DBOptions)
 	defer db.Close()
 
-	oldVersion, newVersion, err := migrations.Run(db, "version")
+	oldVersion, newVersion, err := migrations.Run(db, "init")
 
 	if err != nil {
 		return err
 	}
 
-	repo.Logging.Stdout.Printf("old %d", oldVersion)
-	repo.Logging.Stdout.Printf("new %d", newVersion)
+	repo.Logging.Stdout.Printf("DB Init Migrations: old %d -> new %d", oldVersion, newVersion)
 
+	return nil
+}
+
+func (repo *Repo) RunMigration() error {
+
+	db := pg.Connect(repo.DBOptions)
+	defer db.Close()
+
+	oldVersion, newVersion, err := migrations.Run(db, "up")
+
+	if err != nil {
+		return err
+	}
+
+	repo.Logging.Stdout.Printf("DB Migration: old %d -> new %d", oldVersion, newVersion)
 	return nil
 }
