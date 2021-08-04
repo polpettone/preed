@@ -6,8 +6,9 @@
     {{with .BookingStatistics}}
     <h2>Statistik</h2>
 
-    <pre><code>Anzahl Buchungen      {{ .Count}}                 </code></pre>
-    <pre><code>Anzahl gebuchter Tage {{ .TotalAllocationDays}} </code></pre>
+    <pre><code>Anzahl Buchungen      {{ .Count}}                           </code></pre>
+    <pre><code>Anzahl Stornierungen  {{ .CountCancellation}}               </code></pre>
+    <pre><code>Anzahl gebuchter Tage {{ .TotalAllocationDays}}             </code></pre>
     <pre><code>Total Income          {{displayMoney .TotalIncome}}         </code></pre>
     <pre><code>Total Provision       {{displayMoney .TotalProvision}}      </code></pre>
 

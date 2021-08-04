@@ -8,8 +8,25 @@ type BookingStatistics struct {
 	Bookings []Booking
 }
 
+
 func (o BookingStatistics) Count() int {
-	return len(o.Bookings)
+	count := 0
+	for _, b := range o.Bookings {
+		if !b.Canceled {
+			count += 1
+		}
+	}
+	return count
+}
+
+func (o BookingStatistics) CountCancellation() int {
+	count := 0
+	for _, b := range o.Bookings {
+		if b.Canceled {
+			count += 1
+		}
+	}
+	return count
 }
 
 func (o BookingStatistics) TotalAllocationDays() int {
