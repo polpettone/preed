@@ -85,15 +85,6 @@ func (app *WebApp) uploadFileForBookingForm(w http.ResponseWriter, r *http.Reque
 	})
 }
 
-func parseForm(w http.ResponseWriter, r *http.Request, app *WebApp) error {
-	err := r.ParseForm()
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-		return err
-	}
-	return nil
-}
-
 func (app *WebApp) deleteBooking(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
@@ -101,26 +92,16 @@ func (app *WebApp) deleteBooking(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form := forms.New(r.PostForm)
-	var bookingId int64
-	if form.Get("id") != "" {
-		id, err := strconv.Atoi(form.Get("id"))
-		if err != nil {
-			app.notFound(w)
-			return
-		}
-		bookingId = int64(id)
-	}
-
-	b, err := app.BookingService.GetBookingById(bookingId)
+	bookingID, err := getBookingIDFromForm(w, r, app)
 	if err != nil {
-		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
-		} else {
-			app.serverError(w, err)
-		}
 		return
 	}
+
+	b, err := getBookingByID(w, *bookingID, app)
+	if err != nil {
+		return
+	}
+
 	err = app.BookingService.DeleteBooking(b)
 	if err != nil {
 		app.serverError(w, err)
@@ -135,13 +116,9 @@ func (app *WebApp) deleteBookingForm(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-	b, err := app.BookingService.GetBookingById(int64(id))
+
+	b, err := getBookingByID(w, int64(id), app)
 	if err != nil {
-		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
-		} else {
-			app.serverError(w, err)
-		}
 		return
 	}
 
@@ -161,26 +138,16 @@ func (app *WebApp) cancelBooking(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form := forms.New(r.PostForm)
-	var bookingId int64
-	if form.Get("id") != "" {
-		id, err := strconv.Atoi(form.Get("id"))
-		if err != nil {
-			app.notFound(w)
-			return
-		}
-		bookingId = int64(id)
-	}
-
-	b, err := app.BookingService.GetBookingById(bookingId)
+	bookingID, err := getBookingIDFromForm(w, r, app)
 	if err != nil {
-		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
-		} else {
-			app.serverError(w, err)
-		}
 		return
 	}
+
+	b, err := getBookingByID(w, *bookingID, app)
+	if err != nil {
+		return
+	}
+
 	err = app.BookingService.CancelBooking(b)
 	if err != nil {
 		app.serverError(w, err)
@@ -195,13 +162,9 @@ func (app *WebApp) cancelBookingForm(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-	b, err := app.BookingService.GetBookingById(int64(id))
+
+	b, err := getBookingByID(w, int64(id), app)
 	if err != nil {
-		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
-		} else {
-			app.serverError(w, err)
-		}
 		return
 	}
 
@@ -220,15 +183,12 @@ func (app *WebApp) showBooking(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-	b, err := app.BookingService.GetBookingById(int64(id))
+
+	b, err := getBookingByID(w, int64(id), app)
 	if err != nil {
-		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
-		} else {
-			app.serverError(w, err)
-		}
 		return
 	}
+
 	app.render(w, r, "booking.page.tmpl", &templateData{
 		Booking: *b,
 	})
@@ -295,13 +255,9 @@ func (app *WebApp) editBookingForm(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-	b, err := app.BookingService.GetBookingById(int64(id))
+
+	b, err := getBookingByID(w, int64(id), app)
 	if err != nil {
-		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
-		} else {
-			app.serverError(w, err)
-		}
 		return
 	}
 
@@ -349,26 +305,15 @@ func (app *WebApp) editBooking(w http.ResponseWriter, r *http.Request) {
 
 	converter := NewFormToBookingConverter()
 
-	var bookingId int64
-	if form.Get("id") != "" {
-		id, err := strconv.Atoi(form.Get("id"))
-		if err != nil {
-			app.notFound(w)
-			return
-		}
-		bookingId = int64(id)
-	}
-
-	b, err := app.BookingService.GetBookingById(bookingId)
+	bookingID, err := getBookingIDFromForm(w, r, app)
 	if err != nil {
-		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
-		} else {
-			app.serverError(w, err)
-		}
 		return
 	}
 
+	b, err := getBookingByID(w, *bookingID, app)
+	if err != nil {
+		return
+	}
 	booking, err := converter.convertFormToBooking(*form, *b)
 	if err != nil {
 		app.ErrorLog.Printf("%v", err)
@@ -388,6 +333,42 @@ var (
 )
 
 
+func parseForm(w http.ResponseWriter, r *http.Request, app *WebApp) error {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return err
+	}
+	return nil
+}
+
+func getBookingByID(w http.ResponseWriter, bookingID int64, app *WebApp) (*models.Booking, error) {
+	b, err := app.BookingService.GetBookingById(bookingID)
+	if err != nil {
+		if errors.Is(err, ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return nil, err
+	}
+	return b, nil
+}
+
+func getBookingIDFromForm(w http.ResponseWriter, r *http.Request, app *WebApp) (*int64, error) {
+	form := forms.New(r.PostForm)
+	var bookingId int64
+	if form.Get("id") != "" {
+		id, err := strconv.Atoi(form.Get("id"))
+		if err != nil {
+			app.notFound(w)
+			return nil, err
+		}
+		bookingId = int64(id)
+	}
+
+	return &bookingId, nil
+}
 
 
 
