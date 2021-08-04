@@ -24,8 +24,12 @@
             <th>Gesamt minus Provision </th>
             <th>Angelegt am</th>
             <th>Geaendert am</th>
+
+            <th>Storniert</th>
+
             <th>Edit</th>
             <th>Delete</th>
+            <th>Cancel</th>
 
         </tr>
         {{range .Bookings}}
@@ -46,8 +50,12 @@
             <td>{{displayMoney .TotalMinusProvision}}</td>
             <td>{{humanDate .CreatedAt}}</td>
             <td>{{humanDate .ModifiedAt}}</td>
+
+            <td>{{ .Canceled}}</td>
+
             <td><a href='/booking/edit/{{.ID}}'>edit</a></td>
             <td><a href='/booking/delete/{{.ID}}'>delete</a></td>
+            <td><a href='/booking/cancel/{{.ID}}'>cancel</a></td>
         </tr>
         {{end}}
     </table>

@@ -43,6 +43,14 @@ type Booking struct {
 	Canceled bool
 }
 
+func (b *Booking) Cancel() {
+	b.Canceled = true
+}
+
+func (b *Booking) ResetCancellation() {
+	b.Canceled = false
+}
+
 func (b *Booking) String() string {
 	return fmt.Sprintf("Booking<%d %v %v %s %s>", b.ID, b.StartDate, b.EndDate, b.Customer.NameAnschrift, b.Notes)
 }

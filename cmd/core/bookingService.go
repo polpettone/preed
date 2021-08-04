@@ -61,3 +61,13 @@ func (bookingService *BookingService) CreateBooking(booking *models.Booking) err
 func (bookingService *BookingService) DeleteBooking(booking *models.Booking) error {
 	return bookingService.Repo.DeleteBooking(booking)
 }
+
+func (bookingService *BookingService) CancelBooking(booking *models.Booking) error {
+	booking.Cancel()
+	return bookingService.Repo.SaveBooking(booking)
+}
+
+func (bookingService *BookingService) ResetCancellationOfBooking(booking *models.Booking) error {
+	booking.ResetCancellation()
+	return bookingService.Repo.SaveBooking(booking)
+}

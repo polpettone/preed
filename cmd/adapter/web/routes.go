@@ -25,6 +25,9 @@ func (app *WebApp) routes() http.Handler {
 	mux.Get("/booking/delete/:id", dynamicMiddleware.ThenFunc(app.deleteBookingForm))
 	mux.Post("/booking/delete", dynamicMiddleware.ThenFunc(app.deleteBooking))
 
+	mux.Get("/booking/cancel/:id", dynamicMiddleware.ThenFunc(app.cancelBookingForm))
+	mux.Post("/booking/cancel", dynamicMiddleware.ThenFunc(app.cancelBooking))
+
 	mux.Get("/upload", dynamicMiddleware.ThenFunc(app.uploadFileForBookingForm))
 	mux.Post("/upload", dynamicMiddleware.ThenFunc(app.uploadFileForBooking))
 
