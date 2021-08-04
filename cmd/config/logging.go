@@ -24,7 +24,7 @@ func openLogFile(path string) *os.File {
 func NewLogging() *Logging {
 	stdout := log.New(os.Stdout, "", 0)
 	result := log.New(openLogFile("result.log"), "", 0)
-	infoLog := log.New(openLogFile("info.log"), "INFO\t", log.Ldate|log.Ltime)
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	debugLog := log.New(openLogFile("debug.log"), "DEBUG\t", log.Ldate|log.Ltime|log.Lshortfile)
 
