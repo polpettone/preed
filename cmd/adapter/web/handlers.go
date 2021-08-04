@@ -85,11 +85,19 @@ func (app *WebApp) uploadFileForBookingForm(w http.ResponseWriter, r *http.Reque
 	})
 }
 
-func (app *WebApp) deleteBooking(w http.ResponseWriter, r *http.Request) {
-
+func parseForm(w http.ResponseWriter, r *http.Request, app *WebApp) error {
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
+		return err
+	}
+	return nil
+}
+
+func (app *WebApp) deleteBooking(w http.ResponseWriter, r *http.Request) {
+
+	err := parseForm(w, r, app)
+	if err != nil {
 		return
 	}
 
@@ -148,9 +156,8 @@ func (app *WebApp) deleteBookingForm(w http.ResponseWriter, r *http.Request) {
 
 func (app *WebApp) cancelBooking(w http.ResponseWriter, r *http.Request) {
 
-	err := r.ParseForm()
+	err := parseForm(w, r, app)
 	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
@@ -235,9 +242,8 @@ func (app *WebApp) createBookingForm(w http.ResponseWriter, r *http.Request) {
 
 func (app *WebApp) createBooking(w http.ResponseWriter, r *http.Request) {
 
-	err := r.ParseForm()
+	err := parseForm(w, r, app)
 	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
@@ -311,9 +317,8 @@ func (app *WebApp) editBookingForm(w http.ResponseWriter, r *http.Request) {
 
 func (app *WebApp) editBooking(w http.ResponseWriter, r *http.Request) {
 
-	err := r.ParseForm()
+	err := parseForm(w, r, app)
 	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
