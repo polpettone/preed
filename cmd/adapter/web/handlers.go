@@ -27,34 +27,24 @@ func (app *WebApp) showPriceTable(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *WebApp) showStatistics(w http.ResponseWriter, r *http.Request) {
+
+	bookings, err := getBookingsForYear(w, r, app)
+	if err != nil {
+		return
+	}
+
+	statistics := app.BookingService.CalcBookingStatistics(bookings)
+
 	app.render(w, r, "statistics.page.tmpl", &templateData{
+		BookingStatistics: *statistics,
 	})
 }
 
 func (app *WebApp) bookingOverview(w http.ResponseWriter, r *http.Request) {
 
-	var bookings []models.Booking
-
-	year := r.URL.Query().Get("year")
-	if year == "" {
-		foundBookings, err := app.BookingService.GetAllBookings()
-		if err != nil {
-			app.serverError(w, err)
-			return
-		}
-		bookings = foundBookings
-	} else {
-		yearInt, err := strconv.Atoi(year)
-		if err != nil {
-			app.InfoLog.Printf("", err)
-		} else {
-			foundBookings, err := app.BookingService.GetAllBookingsForYear(yearInt)
-			if err != nil {
-				app.serverError(w, err)
-				return
-			}
-			bookings = foundBookings
-		}
+	bookings, err := getBookingsForYear(w, r, app)
+	if err != nil {
+		return
 	}
 
 	sort.Slice(bookings, func(i, j int) bool {
@@ -65,6 +55,7 @@ func (app *WebApp) bookingOverview(w http.ResponseWriter, r *http.Request) {
 		Bookings: bookings,
 	})
 }
+
 
 
 func (app *WebApp) uploadFileForBooking(w http.ResponseWriter, r *http.Request) {
@@ -417,6 +408,33 @@ func getBookingIDFromForm(w http.ResponseWriter, r *http.Request, app *WebApp) (
 }
 
 
+func getBookingsForYear(w http.ResponseWriter, r *http.Request, app *WebApp) ([]models.Booking, error) {
+	var bookings []models.Booking
+
+	year := r.URL.Query().Get("year")
+	if year == "" {
+		foundBookings, err := app.BookingService.GetAllBookings()
+		if err != nil {
+			app.serverError(w, err)
+			return nil, err
+		}
+		bookings = foundBookings
+	} else {
+		yearInt, err := strconv.Atoi(year)
+		if err != nil {
+			app.InfoLog.Printf("", err)
+		} else {
+			foundBookings, err := app.BookingService.GetAllBookingsForYear(yearInt)
+			if err != nil {
+				app.serverError(w, err)
+				return nil, err
+			}
+			bookings = foundBookings
+		}
+	}
+
+	return bookings, nil
+}
 
 
 

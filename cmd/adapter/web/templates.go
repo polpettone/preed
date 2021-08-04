@@ -17,6 +17,7 @@ type templateData struct {
 	IsAuthenticated bool
 	Bookings        []coreModels.Booking
 	Booking         coreModels.Booking
+	BookingStatistics coreModels.BookingStatistics
 }
 
 func humanDate(t time.Time) string {

@@ -25,6 +25,12 @@ func (bookingService *BookingService) Overview() (*models.BookingStatistics, err
 	return bookingOverView, nil
 }
 
+
+func (bookingService *BookingService) CalcBookingStatistics(bookings []models.Booking) *models.BookingStatistics {
+	statistics := &models.BookingStatistics{Bookings: bookings}
+	return statistics
+}
+
 func (bookingService *BookingService) GetAllBookings() ([]models.Booking, error) {
 	bookings, err := bookingService.Repo.FindAllBookings()
 	if err != nil {
