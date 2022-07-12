@@ -274,7 +274,7 @@ func (app *WebApp) CreateLedgerEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ledgerEntry, err := converter2.ConvertFormToLedgerEntry(*form)
+	ledgerEntry, err := converter2.ConvertFormToLedgerEntry(*form, *models.NewLedgerEntry())
 	if err != nil {
 		app.ErrorLog.Printf("%v", err)
 	}
@@ -338,6 +338,68 @@ func (app *WebApp) CreateBooking(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/bookings"), http.StatusSeeOther)
+}
+
+func (app *WebApp) EditLedgerEntryForm(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get(":id")
+
+	e, err := getLedgerEntryByID(w, id, app)
+	if err != nil {
+		return
+	}
+
+	form := converter2.ConvertLedgerEntryToForm(*e)
+
+	app.render(w, r, "editLedgerEntry.page.tmpl", &templateData{
+		Form: &form,
+	})
+}
+
+func (app *WebApp) EditLedgerEntry(w http.ResponseWriter, r *http.Request) {
+
+	err := parseForm(w, r, app)
+	if err != nil {
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("item",
+		"receiver",
+		"amount")
+
+	form.ValidDateFormat("dueDate")
+	form.ValidDateFormat("paidDate")
+	form.ValidMoneyFormat("amount")
+	form.MaxLength("notes", 100)
+
+	if !form.Valid() {
+		app.render(w, r, "editLedgerEntry.page.tmpl", &templateData{Form: form})
+		return
+	}
+
+	app.InfoLog.Printf("%v", form)
+
+	app.Session.Put(r, "flash", "Ledger Entry erfolgreich geaendert")
+
+	id := form.Get("id")
+
+	entry, err := getLedgerEntryByID(w, id, app)
+	if err != nil {
+		app.ErrorLog.Printf("%v", err)
+		return
+	}
+
+	entry, err = converter2.ConvertFormToLedgerEntry(*form, *entry)
+	if err != nil {
+		app.ErrorLog.Printf("%v", err)
+	}
+
+	err = app.BookingService.Repo.SaveLedgerEntry(entry)
+	if err != nil {
+		app.ErrorLog.Printf("%v", err)
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/ledger"), http.StatusSeeOther)
 }
 
 func (app *WebApp) EditBookingForm(w http.ResponseWriter, r *http.Request) {
@@ -429,6 +491,19 @@ func parseForm(w http.ResponseWriter, r *http.Request, app *WebApp) error {
 		return err
 	}
 	return nil
+}
+
+func getLedgerEntryByID(w http.ResponseWriter, id string, app *WebApp) (*models.LedgerEntry, error) {
+	b, err := app.BookingService.Repo.FindLedgerEntryByID(id)
+	if err != nil {
+		if errors.Is(err, ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return nil, err
+	}
+	return b, nil
 }
 
 func getBookingByID(w http.ResponseWriter, bookingID int64, app *WebApp) (*models.Booking, error) {

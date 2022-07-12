@@ -6,17 +6,14 @@ import (
 	"time"
 
 	money2 "github.com/Rhymond/go-money"
-	"github.com/google/uuid"
 	"github.com/polpettone/preed/cmd/core/models"
 	"github.com/polpettone/preed/pkg/forms"
 )
 
-func ConvertFormToLedgerEntry(form forms.Form) (*models.LedgerEntry, error) {
+func ConvertFormToLedgerEntry(form forms.Form, ledgerEntry models.LedgerEntry) (*models.LedgerEntry, error) {
 
-	ledgerEntry := models.LedgerEntry{}
 	timeFormat := "02.01.2006"
 
-	ledgerEntry.ID = uuid.New().String()
 	ledgerEntry.Item = form.Get("item")
 	ledgerEntry.Receiver = form.Get("receiver")
 
@@ -97,6 +94,26 @@ func (converter FormToBookingConverter) ConvertBookingToForm(booking models.Book
 	form.Set("cleaningPrice", strconv.Itoa(int(booking.CleaningPrice.Amount()/100)))
 	form.Set("provision", strconv.Itoa(int(booking.Provision.Amount()/100)))
 	form.Set("numberOfGuests", strconv.Itoa(booking.NumberOfGuests))
+
+	return *form
+}
+
+func ConvertLedgerEntryToForm(entry models.LedgerEntry) forms.Form {
+
+	timeFormat := "02.01.2006"
+
+	data := url.Values{}
+	form := forms.New(data)
+
+	form.Set("id", entry.ID)
+
+	form.Set("dueDate", entry.DueDate.Format(timeFormat))
+	form.Set("paidDate", entry.PaidDate.Format(timeFormat))
+
+	form.Set("amount", strconv.Itoa(int(entry.Amount.Amount()/100)))
+	form.Set("notes", entry.Notes)
+	form.Set("receiver", entry.Receiver)
+	form.Set("item", entry.Item)
 
 	return *form
 }

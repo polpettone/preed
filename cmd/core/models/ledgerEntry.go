@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/Rhymond/go-money"
+	"github.com/google/uuid"
 )
 
 type LedgerEntry struct {
@@ -14,4 +15,10 @@ type LedgerEntry struct {
 	DueDate  time.Time
 	PaidDate time.Time
 	Notes    string
+}
+
+func NewLedgerEntry() *LedgerEntry {
+	return &LedgerEntry{
+		ID: uuid.New().String(),
+	}
 }

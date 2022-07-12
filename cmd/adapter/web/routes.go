@@ -22,6 +22,7 @@ func (app *WebApp) routes() http.Handler {
 
 	mux.Get("/booking/edit/:id", dynamicMiddleware.ThenFunc(app.EditBookingForm))
 	mux.Post("/booking/edit", dynamicMiddleware.ThenFunc(app.EditBooking))
+
 	mux.Get("/booking/:id", dynamicMiddleware.ThenFunc(app.ShowBooking))
 
 	mux.Get("/booking/delete/:id", dynamicMiddleware.ThenFunc(app.DeleteBookingForm))
@@ -36,10 +37,13 @@ func (app *WebApp) routes() http.Handler {
 	mux.Get("/upload", dynamicMiddleware.ThenFunc(app.UploadFileForBookingForm))
 	mux.Post("/upload", dynamicMiddleware.ThenFunc(app.UploadFileForBooking))
 
+	mux.Get("/ledger", dynamicMiddleware.ThenFunc(app.ShowLedger))
+
 	mux.Get("/ledgerEntry/create", dynamicMiddleware.ThenFunc(app.CreateLedgerEntryForm))
 	mux.Post("/ledgerEntry/create", dynamicMiddleware.ThenFunc(app.CreateLedgerEntry))
 
-	mux.Get("/ledger", dynamicMiddleware.ThenFunc(app.ShowLedger))
+	mux.Get("/ledgerEntry/edit/:id", dynamicMiddleware.ThenFunc(app.EditLedgerEntryForm))
+	mux.Post("/ledgerEntry/edit", dynamicMiddleware.ThenFunc(app.EditLedgerEntry))
 
 	mux.Get("/price-table", dynamicMiddleware.ThenFunc(app.ShowPriceTable))
 	mux.Get("/statistics", dynamicMiddleware.ThenFunc(app.ShowStatistics))

@@ -88,12 +88,34 @@ func (repo *Repo) SaveLedgerEntry(ledgerEntry *models2.LedgerEntry) error {
 	defer db.Close()
 	result, err := db.Model(ledgerEntry).
 		OnConflict("(id) DO UPDATE").
-		Set("item = EXCLUDED.item").Insert()
+		Set("item = EXCLUDED.item").
+		Set("receiver = EXCLUDED.receiver").
+		Set("amount = EXCLUDED.amount").
+		Set("due_date = EXCLUDED.due_date").
+		Set("paid_date = EXCLUDED.paid_date").
+		Set("notes = EXCLUDED.notes").
+		Insert()
 	if err != nil {
 		return err
 	}
 	repo.Logging.DebugLog.Printf("%v", result)
 	return nil
+}
+
+func (repo *Repo) FindLedgerEntryByID(id string) (*models2.LedgerEntry, error) {
+	db := pg.Connect(repo.DBOptions)
+	defer db.Close()
+
+	ledgerEntry := &models2.LedgerEntry{ID: id}
+	err := db.Model(ledgerEntry).
+		WherePK().
+		Select()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ledgerEntry, nil
 }
 
 func (repo *Repo) FindAllLedgerEntries() ([]models2.LedgerEntry, error) {
