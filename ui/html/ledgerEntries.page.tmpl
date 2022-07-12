@@ -1,0 +1,41 @@
+{{template "base" .}}
+
+{{define "title"}}Ledger Entries{{end}}
+
+{{define "main"}}
+    <h2>Ledger Entries</h2>
+                    <a href='/ledgerEntry/create'>Eintrag anlegen</a>
+    {{if .LedgerEntries}}
+    <table>
+        <tr>
+
+            <th>ID</th>
+            <th>Item</th>
+            <th>Receiver</th>
+            <th>Amount</th>
+
+            <th>DueDate</th>
+            <th>PaidDate</th>
+            <th>Notes</th>
+
+        </tr>
+        {{range .LedgerEntries}}
+        <tr>
+            <td><a href='/ledgerEntry/{{.ID}}'>{{.ID}}</a></td>
+
+            <td>{{ .Item}}</td>
+            <td>{{ .Receiver}}</td>
+
+            <td>{{displayMoney .Amount}}</td>
+            <td>{{humanDate .DueDate}}</td>
+            <td>{{humanDate .PaidDate}}</td>
+
+            <td>{{ .Notes}}</td>
+
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There's nothing to see here yet!</p>
+    {{end}}
+{{end}}

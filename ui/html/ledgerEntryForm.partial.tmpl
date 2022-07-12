@@ -1,0 +1,41 @@
+{{define "ledgerEntryForm"}}
+
+        <label>Item</label>
+        {{with .Errors.Get "item"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='item' value='{{.Get "item"}}'>
+
+        <label>Receiver</label>
+        {{with .Errors.Get "receiver"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='receiver' value='{{.Get "receiver"}}'>
+
+        <label>Amount</label>
+        {{with .Errors.Get "amount"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='amount' value='{{.Get "amount"}}'>
+
+        <label>DueDate</label>
+        {{with .Errors.Get "dueDate"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='dueDate' value='{{.Get "dueDate"}}'>
+
+        <label>PaidDate</label>
+        {{with .Errors.Get "paidDate"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='paidDate' value='{{.Get "paidDate"}}'>
+
+        <label>Notes:</label>
+        {{with .Errors.Get "notes"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <div>
+            <textarea name="notes" rows="20" cols="80">{{.Get "notes"}}</textarea>
+        </div>
+
+{{end}}

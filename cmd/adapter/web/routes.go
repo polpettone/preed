@@ -16,8 +16,10 @@ func (app *WebApp) routes() http.Handler {
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.Home))
 
 	mux.Get("/bookings", dynamicMiddleware.ThenFunc(app.BookingOverview))
+
 	mux.Get("/booking/create", dynamicMiddleware.ThenFunc(app.CreateBookingForm))
 	mux.Post("/booking/create", dynamicMiddleware.ThenFunc(app.CreateBooking))
+
 	mux.Get("/booking/edit/:id", dynamicMiddleware.ThenFunc(app.EditBookingForm))
 	mux.Post("/booking/edit", dynamicMiddleware.ThenFunc(app.EditBooking))
 	mux.Get("/booking/:id", dynamicMiddleware.ThenFunc(app.ShowBooking))
@@ -34,12 +36,13 @@ func (app *WebApp) routes() http.Handler {
 	mux.Get("/upload", dynamicMiddleware.ThenFunc(app.UploadFileForBookingForm))
 	mux.Post("/upload", dynamicMiddleware.ThenFunc(app.UploadFileForBooking))
 
+	mux.Get("/ledgerEntry/create", dynamicMiddleware.ThenFunc(app.CreateLedgerEntryForm))
+	mux.Post("/ledgerEntry/create", dynamicMiddleware.ThenFunc(app.CreateLedgerEntry))
 
 	mux.Get("/ledger", dynamicMiddleware.ThenFunc(app.ShowLedger))
+
 	mux.Get("/price-table", dynamicMiddleware.ThenFunc(app.ShowPriceTable))
 	mux.Get("/statistics", dynamicMiddleware.ThenFunc(app.ShowStatistics))
-
-
 
 	fileServer := http.FileServer(http.Dir("./ui/static"))
 	mux.Get("/static/", http.StripPrefix("/static", fileServer))

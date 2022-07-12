@@ -83,6 +83,30 @@ func (repo *Repo) DeleteBooking(booking *models2.Booking) error {
 	return nil
 }
 
+func (repo *Repo) SaveLedgerEntry(ledgerEntry *models2.LedgerEntry) error {
+	db := pg.Connect(repo.DBOptions)
+	defer db.Close()
+	result, err := db.Model(ledgerEntry).
+		OnConflict("(id) DO UPDATE").
+		Set("item = EXCLUDED.item").Insert()
+	if err != nil {
+		return err
+	}
+	repo.Logging.DebugLog.Printf("%v", result)
+	return nil
+}
+
+func (repo *Repo) FindAllLedgerEntries() ([]models2.LedgerEntry, error) {
+	db := pg.Connect(repo.DBOptions)
+	defer db.Close()
+	var entries []models2.LedgerEntry
+	err := db.Model(&entries).Select()
+	if err != nil {
+		return nil, err
+	}
+	return entries, nil
+}
+
 func (repo *Repo) SaveCustomer(customer *models2.Customer) error {
 	db := pg.Connect(repo.DBOptions)
 	defer db.Close()

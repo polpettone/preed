@@ -3,33 +3,40 @@ package web
 import (
 	"errors"
 	"fmt"
-	converter2 "github.com/polpettone/preed/cmd/adapter/web/converter"
-	"github.com/polpettone/preed/cmd/core/models"
-	"github.com/polpettone/preed/pkg/forms"
 	"net/http"
 	"net/url"
 	"sort"
 	"strconv"
+
+	converter2 "github.com/polpettone/preed/cmd/adapter/web/converter"
+	"github.com/polpettone/preed/cmd/core/models"
+	"github.com/polpettone/preed/pkg/forms"
 )
 
 func (app *WebApp) Home(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "main.page.tmpl", &templateData{
-	})
+	app.render(w, r, "main.page.tmpl", &templateData{})
 }
 
 func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "ledger.page.tmpl", &templateData{
+
+	ledgerEntries, err := app.BookingService.GetAllLedgerEntries()
+	if err != nil {
+		return
+	}
+
+	app.render(w, r, "ledgerEntries.page.tmpl", &templateData{
+		LedgerEntries: ledgerEntries,
 	})
 }
 
 func (app *WebApp) ShowPriceTable(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "price-table.page.tmpl", &templateData{
-	})
+	app.render(w, r, "price-table.page.tmpl", &templateData{})
 }
 
 func (app *WebApp) ShowStatistics(w http.ResponseWriter, r *http.Request) {
 
 	bookings, err := getBookingsForYear(w, r, app)
+
 	if err != nil {
 		return
 	}
@@ -57,8 +64,6 @@ func (app *WebApp) BookingOverview(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-
-
 func (app *WebApp) UploadFileForBooking(w http.ResponseWriter, r *http.Request) {
 	file, handler, err := r.FormFile("file")
 	if err != nil {
@@ -73,8 +78,7 @@ func (app *WebApp) UploadFileForBooking(w http.ResponseWriter, r *http.Request) 
 }
 
 func (app *WebApp) UploadFileForBookingForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "upload.page.tmpl", &templateData{
-	})
+	app.render(w, r, "upload.page.tmpl", &templateData{})
 }
 
 func (app *WebApp) DeleteBooking(w http.ResponseWriter, r *http.Request) {
@@ -238,6 +242,55 @@ func (app *WebApp) CreateBookingForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (app *WebApp) CreateLedgerEntryForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "createLedgerEntry.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
+}
+
+func (app *WebApp) CreateLedgerEntry(w http.ResponseWriter, r *http.Request) {
+
+	app.InfoLog.Printf("%s", "Create Ledger Entry")
+
+	err := parseForm(w, r, app)
+	if err != nil {
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("item",
+		"receiver",
+		"amount")
+
+	form.ValidDateFormat("dueDate")
+	form.ValidDateFormat("paidDate")
+
+	form.ValidMoneyFormat("amount")
+
+	form.MaxLength("notes", 100)
+
+	if !form.Valid() {
+		app.render(w, r, "createLedgerEntry.page.tmpl", &templateData{Form: form})
+		return
+	}
+
+	ledgerEntry, err := converter2.ConvertFormToLedgerEntry(*form)
+	if err != nil {
+		app.ErrorLog.Printf("%v", err)
+	}
+
+	app.InfoLog.Printf("%v", ledgerEntry)
+
+	err = app.BookingService.Repo.SaveLedgerEntry(ledgerEntry)
+	if err != nil {
+		app.ErrorLog.Printf("%v", err)
+	}
+
+	app.Session.Put(r, "flash", "Ledger Entry erfolgreich angelegt")
+
+	http.Redirect(w, r, fmt.Sprintf("/ledger"), http.StatusSeeOther)
+}
+
 func (app *WebApp) CreateBooking(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
@@ -365,11 +418,9 @@ func (app *WebApp) EditBooking(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/bookings"), http.StatusSeeOther)
 }
 
-
 var (
-	ErrNoRecord           = errors.New("models: no matching record found")
+	ErrNoRecord = errors.New("models: no matching record found")
 )
-
 
 func parseForm(w http.ResponseWriter, r *http.Request, app *WebApp) error {
 	err := r.ParseForm()
@@ -408,7 +459,6 @@ func getBookingIDFromForm(w http.ResponseWriter, r *http.Request, app *WebApp) (
 	return &bookingId, nil
 }
 
-
 func getBookingsForYear(w http.ResponseWriter, r *http.Request, app *WebApp) ([]models.Booking, error) {
 	var bookings []models.Booking
 
@@ -436,10 +486,3 @@ func getBookingsForYear(w http.ResponseWriter, r *http.Request, app *WebApp) ([]
 
 	return bookings, nil
 }
-
-
-
-
-
-
-

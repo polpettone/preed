@@ -1,9 +1,10 @@
 package core
 
 import (
+	"time"
+
 	"github.com/polpettone/preed/cmd/adapter/persistence"
 	"github.com/polpettone/preed/cmd/core/models"
-	"time"
 )
 
 type BookingService struct {
@@ -11,7 +12,7 @@ type BookingService struct {
 }
 
 func NewBookingService(repo persistence.Repo) BookingService {
-	return BookingService{Repo : repo}
+	return BookingService{Repo: repo}
 }
 
 func (bookingService *BookingService) Overview() (*models.BookingStatistics, error) {
@@ -24,7 +25,6 @@ func (bookingService *BookingService) Overview() (*models.BookingStatistics, err
 	bookingOverView := &models.BookingStatistics{Bookings: bookings}
 	return bookingOverView, nil
 }
-
 
 func (bookingService *BookingService) CalcBookingStatistics(bookings []models.Booking) *models.BookingStatistics {
 	statistics := &models.BookingStatistics{Bookings: bookings}
@@ -47,8 +47,6 @@ func (bookingService *BookingService) GetAllBookingsForYear(year int) ([]models.
 	return filterBookingsByYear(bookings, year), nil
 }
 
-
-
 func (bookingService *BookingService) GetBookingById(id int64) (*models.Booking, error) {
 	return bookingService.Repo.FindBookingById(id)
 }
@@ -59,7 +57,7 @@ func (bookingService *BookingService) SaveBooking(booking *models.Booking) error
 }
 
 func (bookingService *BookingService) CreateBooking(booking *models.Booking) error {
-	booking.CreatedAt  = time.Now()
+	booking.CreatedAt = time.Now()
 	booking.ModifiedAt = time.Now()
 	return bookingService.Repo.SaveBooking(booking)
 }
@@ -76,4 +74,16 @@ func (bookingService *BookingService) CancelBooking(booking *models.Booking) err
 func (bookingService *BookingService) ResetCancellationOfBooking(booking *models.Booking) error {
 	booking.ResetCancellation()
 	return bookingService.Repo.SaveBooking(booking)
+}
+
+func (bookingService *BookingService) GetAllLedgerEntries() ([]models.LedgerEntry, error) {
+	entries, err := bookingService.Repo.FindAllLedgerEntries()
+	if err != nil {
+		return nil, err
+	}
+	return entries, nil
+}
+
+func (bookingService *BookingService) SaveLedgerEntry(entry *models.LedgerEntry) error {
+	return bookingService.Repo.SaveLedgerEntry(entry)
 }

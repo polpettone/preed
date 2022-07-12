@@ -1,23 +1,25 @@
 package web
 
 import (
-	"github.com/Rhymond/go-money"
-	coreModels "github.com/polpettone/preed/cmd/core/models"
-	"github.com/polpettone/preed/pkg/forms"
 	"html/template"
 	"path/filepath"
 	"time"
+
+	"github.com/Rhymond/go-money"
+	coreModels "github.com/polpettone/preed/cmd/core/models"
+	"github.com/polpettone/preed/pkg/forms"
 )
 
 type templateData struct {
-	CSRFToken       string
-	CurrentYear     int
-	Flash           string
-	Form            *forms.Form
-	IsAuthenticated bool
-	Bookings        []coreModels.Booking
-	Booking         coreModels.Booking
+	CSRFToken         string
+	CurrentYear       int
+	Flash             string
+	Form              *forms.Form
+	IsAuthenticated   bool
+	Bookings          []coreModels.Booking
+	Booking           coreModels.Booking
 	BookingStatistics coreModels.BookingStatistics
+	LedgerEntries     []coreModels.LedgerEntry
 }
 
 func humanDate(t time.Time) string {

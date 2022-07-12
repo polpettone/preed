@@ -1,0 +1,19 @@
+{{template "base" .}}
+
+{{define "title"}}Ledger Entry anlegen{{end}}
+
+{{define "main"}}
+<form action='/ledgerEntry/create' method='POST'>
+    <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+    {{with .Form}}
+    <div>
+
+        {{template "ledgerEntryForm" .}}
+
+    </div>
+    <div>
+        <input type='submit' value='Anlegen'>
+    </div>
+    {{end}}
+</form>
+{{end}}

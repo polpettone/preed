@@ -1,13 +1,43 @@
 package converter
 
 import (
-	money2 "github.com/Rhymond/go-money"
-	"github.com/polpettone/preed/cmd/core/models"
-	"github.com/polpettone/preed/pkg/forms"
 	"net/url"
 	"strconv"
 	"time"
+
+	money2 "github.com/Rhymond/go-money"
+	"github.com/google/uuid"
+	"github.com/polpettone/preed/cmd/core/models"
+	"github.com/polpettone/preed/pkg/forms"
 )
+
+func ConvertFormToLedgerEntry(form forms.Form) (*models.LedgerEntry, error) {
+
+	ledgerEntry := models.LedgerEntry{}
+	timeFormat := "02.01.2006"
+
+	ledgerEntry.ID = uuid.New().String()
+	ledgerEntry.Item = form.Get("item")
+	ledgerEntry.Receiver = form.Get("receiver")
+
+	amount, _ := strconv.Atoi(form.Get("amount"))
+	ledgerEntry.Amount = *money2.New(int64(amount*100), "EUR")
+	ledgerEntry.Notes = form.Get("notes")
+
+	dueDate, err := time.Parse(timeFormat, form.Get("dueDate"))
+	if err != nil {
+		return nil, err
+	}
+	ledgerEntry.DueDate = dueDate
+
+	paidDate, err := time.Parse(timeFormat, form.Get("paidDate"))
+	if err != nil {
+		return nil, err
+	}
+	ledgerEntry.PaidDate = paidDate
+
+	return &ledgerEntry, nil
+}
 
 func NewFormToBookingConverter() FormToBookingConverter {
 	return FormToBookingConverter{
@@ -21,15 +51,14 @@ type FormToBookingConverter struct {
 
 func (converter FormToBookingConverter) ConvertFormToBooking(form forms.Form, booking models.Booking) (*models.Booking, error) {
 
-
 	booking.Customer.NameAnschrift = form.Get("nameAnschrift")
 
 	pricePerDayInEuro, _ := strconv.Atoi(form.Get("pricePerDay"))
 	cleaningPriceInEuro, _ := strconv.Atoi(form.Get("cleaningPrice"))
 	provisionInEuro, _ := strconv.Atoi(form.Get("provision"))
-	booking.PricePerDay = *money2.New(int64(pricePerDayInEuro * 100), "EUR")
-	booking.Provision= *money2.New(int64(provisionInEuro * 100), "EUR")
-	booking.CleaningPrice= *money2.New(int64(cleaningPriceInEuro * 100), "EUR")
+	booking.PricePerDay = *money2.New(int64(pricePerDayInEuro*100), "EUR")
+	booking.Provision = *money2.New(int64(provisionInEuro*100), "EUR")
+	booking.CleaningPrice = *money2.New(int64(cleaningPriceInEuro*100), "EUR")
 
 	startDate, err := time.Parse(converter.TimeFormat, form.Get("startDate"))
 	if err != nil {
@@ -64,9 +93,9 @@ func (converter FormToBookingConverter) ConvertBookingToForm(booking models.Book
 
 	form.Set("nameAnschrift", booking.Customer.NameAnschrift)
 
-	form.Set("pricePerDay", strconv.Itoa(int(booking.PricePerDay.Amount()/ 100)))
-	form.Set("cleaningPrice", strconv.Itoa(int(booking.CleaningPrice.Amount() / 100)))
-	form.Set("provision", strconv.Itoa(int(booking.Provision.Amount() / 100)))
+	form.Set("pricePerDay", strconv.Itoa(int(booking.PricePerDay.Amount()/100)))
+	form.Set("cleaningPrice", strconv.Itoa(int(booking.CleaningPrice.Amount()/100)))
+	form.Set("provision", strconv.Itoa(int(booking.Provision.Amount()/100)))
 	form.Set("numberOfGuests", strconv.Itoa(booking.NumberOfGuests))
 
 	return *form
