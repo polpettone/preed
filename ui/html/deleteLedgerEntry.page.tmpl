@@ -1,0 +1,20 @@
+{{template "base" .}}
+
+{{define "title"}}LedgerEntry Loeschen{{end}}
+
+{{define "main"}}
+<form action='/ledgerEntry/delete' method='POST'>
+    <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+    {{with .Form}}
+    <div>
+        <input type='hidden' name='id' value='{{.Get "id"}}'>
+    </div>
+    <div>
+        <input type='submit' value='Delete'>
+    </div>
+    {{end}}
+</form>
+               <div>
+                    <a href='/ledger'class="button">Cancel</a>
+               </div>
+{{end}}

@@ -45,6 +45,9 @@ func (app *WebApp) routes() http.Handler {
 	mux.Get("/ledgerEntry/edit/:id", dynamicMiddleware.ThenFunc(app.EditLedgerEntryForm))
 	mux.Post("/ledgerEntry/edit", dynamicMiddleware.ThenFunc(app.EditLedgerEntry))
 
+	mux.Get("/ledgerEntry/delete/:id", dynamicMiddleware.ThenFunc(app.DeleteLedgerEntryForm))
+	mux.Post("/ledgerEntry/delete", dynamicMiddleware.ThenFunc(app.DeleteLedgerEntry))
+
 	mux.Get("/statistics", dynamicMiddleware.ThenFunc(app.ShowStatistics))
 
 	fileServer := http.FileServer(http.Dir("./ui/static"))

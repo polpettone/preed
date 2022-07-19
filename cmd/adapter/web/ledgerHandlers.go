@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	converter2 "github.com/polpettone/preed/cmd/adapter/web/converter"
 	"github.com/polpettone/preed/cmd/core/models"
@@ -55,6 +56,51 @@ func (app *WebApp) CreateLedgerEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.Session.Put(r, "flash", "Ledger Entry erfolgreich angelegt")
+
+	http.Redirect(w, r, fmt.Sprintf("/ledger"), http.StatusSeeOther)
+}
+
+func (app *WebApp) DeleteLedgerEntryForm(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get(":id")
+
+	app.InfoLog.Printf("DeleteLedgerEntry Form ID: %s", id)
+
+	e, err := getLedgerEntryByID(w, id, app)
+	if err != nil {
+		return
+	}
+
+	app.InfoLog.Printf("Found DeleteLedgerEntry to delete : %v", e)
+	data := url.Values{}
+	form := forms.New(data)
+	form.Set("id", e.ID)
+
+	app.render(w, r, "deleteLedgerEntry.page.tmpl", &templateData{
+		Form: form,
+	})
+}
+
+func (app *WebApp) DeleteLedgerEntry(w http.ResponseWriter, r *http.Request) {
+
+	err := parseForm(w, r, app)
+	if err != nil {
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	id := form.Get("id")
+
+	app.InfoLog.Printf("DeleteLedgerEntry ID: %s", id)
+
+	e, err := getLedgerEntryByID(w, id, app)
+	if err != nil {
+		return
+	}
+
+	err = app.BookingService.Repo.DeleteLedgerEntry(e)
+	if err != nil {
+		app.serverError(w, err)
+	}
 
 	http.Redirect(w, r, fmt.Sprintf("/ledger"), http.StatusSeeOther)
 }
@@ -132,7 +178,6 @@ func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
 		LedgerEntries: ledgerEntries,
 	})
 }
-
 
 func getLedgerEntryByID(w http.ResponseWriter, id string, app *WebApp) (*models.LedgerEntry, error) {
 	b, err := app.BookingService.Repo.FindLedgerEntryByID(id)

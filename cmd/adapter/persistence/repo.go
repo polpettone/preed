@@ -83,6 +83,16 @@ func (repo *Repo) DeleteBooking(booking *models2.Booking) error {
 	return nil
 }
 
+func (repo *Repo) DeleteLedgerEntry(entry *models2.LedgerEntry) error {
+	db := pg.Connect(repo.DBOptions)
+	defer db.Close()
+	_, err := db.Model(entry).Where("id=?0", entry.ID).Delete()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (repo *Repo) SaveLedgerEntry(ledgerEntry *models2.LedgerEntry) error {
 	db := pg.Connect(repo.DBOptions)
 	defer db.Close()

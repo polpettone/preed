@@ -114,6 +114,27 @@ func (app *WebApp) CreateBooking(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/bookings"), http.StatusSeeOther)
 }
 
+func (app *WebApp) DeleteBookingForm(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
+	if err != nil || id < 1 {
+		app.notFound(w)
+		return
+	}
+
+	b, err := getBookingByID(w, int64(id), app)
+	if err != nil {
+		return
+	}
+
+	data := url.Values{}
+	form := forms.New(data)
+	form.Set("id", strconv.Itoa(int(b.ID)))
+
+	app.render(w, r, "deleteBooking.page.tmpl", &templateData{
+		Form: form,
+	})
+}
+
 func (app *WebApp) DeleteBooking(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
@@ -137,27 +158,6 @@ func (app *WebApp) DeleteBooking(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/bookings?year=2021"), http.StatusSeeOther)
-}
-
-func (app *WebApp) DeleteBookingForm(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1 {
-		app.notFound(w)
-		return
-	}
-
-	b, err := getBookingByID(w, int64(id), app)
-	if err != nil {
-		return
-	}
-
-	data := url.Values{}
-	form := forms.New(data)
-	form.Set("id", strconv.Itoa(int(b.ID)))
-
-	app.render(w, r, "deleteBooking.page.tmpl", &templateData{
-		Form: form,
-	})
 }
 
 func (app *WebApp) EditBookingForm(w http.ResponseWriter, r *http.Request) {

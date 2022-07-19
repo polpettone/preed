@@ -18,6 +18,8 @@
             <th>PaidDate</th>
             <th>Notes</th>
 
+            <th>Delete</th>
+
         </tr>
         {{range .LedgerEntries}}
         <tr>
@@ -32,6 +34,7 @@
 
             <td>{{ .Notes}}</td>
 
+            <td><a href='/ledgerEntry/delete/{{.ID}}'>delete</a></td>
         </tr>
         {{end}}
     </table>
