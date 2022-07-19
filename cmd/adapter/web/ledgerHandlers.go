@@ -10,18 +10,6 @@ import (
 	"github.com/polpettone/preed/pkg/forms"
 )
 
-func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
-
-	ledgerEntries, err := app.BookingService.GetAllLedgerEntries()
-	if err != nil {
-		return
-	}
-
-	app.render(w, r, "ledgerEntries.page.tmpl", &templateData{
-		LedgerEntries: ledgerEntries,
-	})
-}
-
 func (app *WebApp) CreateLedgerEntryForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "createLedgerEntry.page.tmpl", &templateData{
 		Form: forms.New(nil),
@@ -132,6 +120,19 @@ func (app *WebApp) EditLedgerEntry(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, fmt.Sprintf("/ledger"), http.StatusSeeOther)
 }
+
+func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
+
+	ledgerEntries, err := app.BookingService.GetAllLedgerEntries()
+	if err != nil {
+		return
+	}
+
+	app.render(w, r, "ledgerEntries.page.tmpl", &templateData{
+		LedgerEntries: ledgerEntries,
+	})
+}
+
 
 func getLedgerEntryByID(w http.ResponseWriter, id string, app *WebApp) (*models.LedgerEntry, error) {
 	b, err := app.BookingService.Repo.FindLedgerEntryByID(id)
