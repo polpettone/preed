@@ -13,54 +13,6 @@ import (
 	"github.com/polpettone/preed/pkg/forms"
 )
 
-func (app *WebApp) ShowStatistics(w http.ResponseWriter, r *http.Request) {
-
-	bookings, err := getBookingsForYear(w, r, app)
-
-	if err != nil {
-		return
-	}
-
-	statistics := app.BookingService.CalcBookingStatistics(bookings)
-
-	app.render(w, r, "statistics.page.tmpl", &templateData{
-		BookingStatistics: *statistics,
-	})
-}
-
-func (app *WebApp) BookingOverview(w http.ResponseWriter, r *http.Request) {
-
-	bookings, err := getBookingsForYear(w, r, app)
-	if err != nil {
-		return
-	}
-
-	sort.Slice(bookings, func(i, j int) bool {
-		return bookings[i].StartDate.Before(bookings[j].StartDate)
-	})
-
-	app.render(w, r, "bookings.page.tmpl", &templateData{
-		Bookings: bookings,
-	})
-}
-
-func (app *WebApp) UploadFileForBooking(w http.ResponseWriter, r *http.Request) {
-	file, handler, err := r.FormFile("file")
-	if err != nil {
-		app.ErrorLog.Println("Error Retrieving the File")
-		app.ErrorLog.Println(err)
-		return
-	}
-	defer file.Close()
-	app.InfoLog.Printf("Uploaded File: %+v\n", handler.Filename)
-	app.InfoLog.Printf("File Size: %+v\n", handler.Size)
-	app.InfoLog.Printf("MIME Header: %+v\n", handler.Header)
-}
-
-func (app *WebApp) UploadFileForBookingForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "upload.page.tmpl", &templateData{})
-}
-
 func (app *WebApp) DeleteBooking(w http.ResponseWriter, r *http.Request) {
 
 	err := parseForm(w, r, app)
@@ -353,15 +305,6 @@ var (
 	ErrNoRecord = errors.New("models: no matching record found")
 )
 
-func parseForm(w http.ResponseWriter, r *http.Request, app *WebApp) error {
-	err := r.ParseForm()
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-		return err
-	}
-	return nil
-}
-
 func getBookingByID(w http.ResponseWriter, bookingID int64, app *WebApp) (*models.Booking, error) {
 	b, err := app.BookingService.GetBookingById(bookingID)
 	if err != nil {
@@ -416,4 +359,52 @@ func getBookingsForYear(w http.ResponseWriter, r *http.Request, app *WebApp) ([]
 	}
 
 	return bookings, nil
+}
+
+func (app *WebApp) ShowStatistics(w http.ResponseWriter, r *http.Request) {
+
+	bookings, err := getBookingsForYear(w, r, app)
+
+	if err != nil {
+		return
+	}
+
+	statistics := app.BookingService.CalcBookingStatistics(bookings)
+
+	app.render(w, r, "statistics.page.tmpl", &templateData{
+		BookingStatistics: *statistics,
+	})
+}
+
+func (app *WebApp) BookingOverview(w http.ResponseWriter, r *http.Request) {
+
+	bookings, err := getBookingsForYear(w, r, app)
+	if err != nil {
+		return
+	}
+
+	sort.Slice(bookings, func(i, j int) bool {
+		return bookings[i].StartDate.Before(bookings[j].StartDate)
+	})
+
+	app.render(w, r, "bookings.page.tmpl", &templateData{
+		Bookings: bookings,
+	})
+}
+
+func (app *WebApp) UploadFileForBooking(w http.ResponseWriter, r *http.Request) {
+	file, handler, err := r.FormFile("file")
+	if err != nil {
+		app.ErrorLog.Println("Error Retrieving the File")
+		app.ErrorLog.Println(err)
+		return
+	}
+	defer file.Close()
+	app.InfoLog.Printf("Uploaded File: %+v\n", handler.Filename)
+	app.InfoLog.Printf("File Size: %+v\n", handler.Size)
+	app.InfoLog.Printf("MIME Header: %+v\n", handler.Header)
+}
+
+func (app *WebApp) UploadFileForBookingForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "upload.page.tmpl", &templateData{})
 }

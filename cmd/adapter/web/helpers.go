@@ -64,3 +64,12 @@ func (app *WebApp) isAuthenticated(r *http.Request) bool {
 	}
 	return isAuthenticated
 }
+
+func parseForm(w http.ResponseWriter, r *http.Request, app *WebApp) error {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return err
+	}
+	return nil
+}
