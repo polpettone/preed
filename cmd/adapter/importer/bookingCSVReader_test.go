@@ -6,7 +6,7 @@ import (
 )
 
 func Test_should_read_csv(t *testing.T) {
-	fileToRead := "testBookings.csv"
+	fileToRead := "../testBookings.csv"
 	rawBookings, err := ReadCSV(fileToRead)
 
 	if err != nil {
