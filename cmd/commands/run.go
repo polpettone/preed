@@ -37,15 +37,13 @@ func (app *Application) handleRunCommand() {
 
 	err := repo.InitMigration()
 	if err != nil {
-		app.Logging.ErrorLog.Println("%v", err)
+		app.Logging.ErrorLog.Printf("%s", err)
 	}
 
 	err = repo.RunMigration()
 	if err != nil {
-		app.Logging.ErrorLog.Println("%v", err)
+		app.Logging.ErrorLog.Printf("%s", err)
 	}
-
-
 
 	web.StartWebAppServer(app.Logging, bookingService)
 }

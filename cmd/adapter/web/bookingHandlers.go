@@ -347,7 +347,7 @@ func getBookingsForYear(w http.ResponseWriter, r *http.Request, app *WebApp) ([]
 	} else {
 		yearInt, err := strconv.Atoi(year)
 		if err != nil {
-			app.InfoLog.Printf("", err)
+			app.InfoLog.Printf("%s", err)
 		} else {
 			foundBookings, err := app.BookingService.GetAllBookingsForYear(yearInt)
 			if err != nil {
