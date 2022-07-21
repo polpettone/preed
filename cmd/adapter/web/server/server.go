@@ -2,14 +2,15 @@ package server
 
 import (
 	"crypto/tls"
-	"github.com/golangcollege/sessions"
-	"github.com/polpettone/preed/cmd/adapter/web/server/templates"
-	"github.com/polpettone/preed/cmd/config"
-	"github.com/polpettone/preed/cmd/core"
 	"html/template"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/golangcollege/sessions"
+	"github.com/polpettone/preed/cmd/adapter/web/server/templates"
+	"github.com/polpettone/preed/cmd/config"
+	"github.com/polpettone/preed/cmd/core"
 )
 
 type contextKey string
@@ -22,9 +23,13 @@ type WebApp struct {
 	ErrorLog       *log.Logger
 	InfoLog        *log.Logger
 	BookingService *core.BookingService
+	LedgerService  *core.LedgerService
 }
 
-func StartWebAppServer(logging *config.Logging, bookingService *core.BookingService) {
+func StartWebAppServer(
+	logging *config.Logging,
+	bookingService *core.BookingService,
+	ledgerService *core.LedgerService) {
 
 	secret := "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge"
 
@@ -43,6 +48,7 @@ func StartWebAppServer(logging *config.Logging, bookingService *core.BookingServ
 		Session:        session,
 		TemplateCache:  templateCache,
 		BookingService: bookingService,
+		LedgerService:  ledgerService,
 	}
 
 	tlsConfig := &tls.Config{

@@ -3,9 +3,10 @@ package server
 import (
 	"errors"
 	"fmt"
-	"github.com/polpettone/preed/cmd/adapter/web/server/templates"
 	"net/http"
 	"net/url"
+
+	"github.com/polpettone/preed/cmd/adapter/web/server/templates"
 
 	converter2 "github.com/polpettone/preed/cmd/adapter/web/converter"
 	"github.com/polpettone/preed/cmd/core/models"
@@ -51,7 +52,7 @@ func (app *WebApp) CreateLedgerEntry(w http.ResponseWriter, r *http.Request) {
 
 	app.InfoLog.Printf("%v", ledgerEntry)
 
-	err = app.BookingService.Repo.SaveLedgerEntry(ledgerEntry)
+	err = app.LedgerService.SaveLedgerEntry(ledgerEntry)
 	if err != nil {
 		app.ErrorLog.Printf("%v", err)
 	}
@@ -98,7 +99,7 @@ func (app *WebApp) DeleteLedgerEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.BookingService.Repo.DeleteLedgerEntry(e)
+	err = app.LedgerService.DeleteLedgerEntry(e)
 	if err != nil {
 		app.ServerError(w, err)
 	}
@@ -160,7 +161,7 @@ func (app *WebApp) EditLedgerEntry(w http.ResponseWriter, r *http.Request) {
 		app.ErrorLog.Printf("%v", err)
 	}
 
-	err = app.BookingService.Repo.SaveLedgerEntry(entry)
+	err = app.LedgerService.SaveLedgerEntry(entry)
 	if err != nil {
 		app.ErrorLog.Printf("%v", err)
 	}
@@ -170,7 +171,7 @@ func (app *WebApp) EditLedgerEntry(w http.ResponseWriter, r *http.Request) {
 
 func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
 
-	ledgerEntries, err := app.BookingService.GetAllLedgerEntries()
+	ledgerEntries, err := app.LedgerService.GetAllLedgerEntries()
 	if err != nil {
 		return
 	}
@@ -181,7 +182,7 @@ func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
 }
 
 func getLedgerEntryByID(w http.ResponseWriter, id string, app *WebApp) (*models.LedgerEntry, error) {
-	b, err := app.BookingService.Repo.FindLedgerEntryByID(id)
+	b, err := app.LedgerService.FindLedgerEntryById(id)
 	if err != nil {
 		if errors.Is(err, ErrNoRecord) {
 			app.NotFound(w)

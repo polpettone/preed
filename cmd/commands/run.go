@@ -32,6 +32,8 @@ func (app *Application) handleRunCommand() {
 		Repo: *repo,
 	}
 
+	ledgerService := core.NewLedgerService(*repo)
+
 	app.Logging.InfoLog.Printf("run command")
 	app.Logging.InfoLog.Printf("run migrations")
 
@@ -45,7 +47,7 @@ func (app *Application) handleRunCommand() {
 		app.Logging.ErrorLog.Printf("%s", err)
 	}
 
-	server.StartWebAppServer(app.Logging, bookingService)
+	server.StartWebAppServer(app.Logging, bookingService, ledgerService)
 }
 
 func init() {

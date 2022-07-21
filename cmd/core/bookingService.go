@@ -75,15 +75,3 @@ func (bookingService *BookingService) ResetCancellationOfBooking(booking *models
 	booking.ResetCancellation()
 	return bookingService.Repo.SaveBooking(booking)
 }
-
-func (bookingService *BookingService) GetAllLedgerEntries() ([]models.LedgerEntry, error) {
-	entries, err := bookingService.Repo.FindAllLedgerEntries()
-	if err != nil {
-		return nil, err
-	}
-	return entries, nil
-}
-
-func (bookingService *BookingService) SaveLedgerEntry(entry *models.LedgerEntry) error {
-	return bookingService.Repo.SaveLedgerEntry(entry)
-}
