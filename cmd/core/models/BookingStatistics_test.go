@@ -1,27 +1,26 @@
-package core
+package models
 
 import (
 	"github.com/Rhymond/go-money"
-	"github.com/polpettone/preed/cmd/core/models"
 	"testing"
 	"time"
 )
 
 func Test_totalAllocationDays(t *testing.T) {
-	b1 := models.Booking{
+	b1 := Booking{
 		StartDate: date(2020, 1, 1),
 		EndDate:   date(2020, 1, 3),
 	}
 
-	b2 := models.Booking{
+	b2 := Booking{
 		StartDate: date(2020, 2, 1),
 		EndDate:   date(2020, 2, 3),
 	}
 
-	bookings := []models.Booking{b1, b2}
-	overview := models.BookingStatistics{Bookings: bookings}
+	bookings := []Booking{b1, b2}
+	bookingStatistics := BookingStatistics{Bookings: bookings}
 
-	totalAllocationDays := overview.TotalAllocationDays()
+	totalAllocationDays := bookingStatistics.TotalAllocationDays()
 
 	if totalAllocationDays != 4 {
 		t.Errorf("Wanted %d got %d", 4, totalAllocationDays)
@@ -37,10 +36,10 @@ func Test_totalIncome(t *testing.T) {
 	b1 := booking(date(2020, 1, 1), date(2020, 1, 3), *money.New(2000, "EUR"))
 	b2 := booking(date(2020, 5, 1), date(2020, 5, 3), *money.New(5000, "EUR"))
 
-	bookings := []models.Booking{b1, b2}
-	overview := models.BookingStatistics{Bookings: bookings}
+	bookings := []Booking{b1, b2}
+	bookingStatistics := BookingStatistics{Bookings: bookings}
 
-	totalIncome := overview.TotalIncome()
+	totalIncome := bookingStatistics.TotalIncome()
 
 	equals, _ := totalIncome.Equals(money.New(14000, "EUR"))
 
@@ -53,8 +52,8 @@ func Test_totalIncome(t *testing.T) {
 func booking(
 	startDate time.Time,
 	endDate time.Time,
-	pricePerDay money.Money) models.Booking {
-	return models.Booking{
+	pricePerDay money.Money) Booking {
+	return Booking{
 		PricePerDay: pricePerDay,
 		StartDate:   startDate,
 		EndDate:     endDate,
