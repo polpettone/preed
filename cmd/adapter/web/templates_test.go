@@ -2,40 +2,32 @@ package web
 
 import (
 	"testing"
-	"time"
 )
 
-func TestHumanDate(t *testing.T) {
+func Test_NewTestTemplateCache_happy_path(t *testing.T) {
 
-	tests := []struct {
-		name string
-		tm   time.Time
-		want string
-	}{
-		{
-			name: "UTC",
-			tm:   time.Date(2020, 12, 17, 10, 0, 0, 0, time.UTC),
-			want: "17.12.2020",
-		},
-		{
-			name: "Empty",
-			tm:   time.Time{},
-			want: "",
-		},
-		{
-			name: "CET",
-			tm:   time.Date(2020, 12, 17, 10, 0, 0, 0, time.FixedZone("CET", 1*60*60)),
-			want: "17.12.2020",
-		},
+	cache, err := newTemplateCache("test-template-data/sub1")
+
+	if err != nil {
+		t.Errorf("wanted not error got %s", err)
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			hd := humanDate(tt.tm)
+	if len(cache) != 1 {
+		t.Errorf("wanted len %d got %d", 1, len(cache))
+	}
 
-			if hd != tt.want {
-				t.Errorf("want %q; got %q", tt.want, hd)
-			}
-		})
+}
+
+func Test_NewTemplateCache_error_if_no_partial(t *testing.T) {
+	_, err := newTemplateCache("test-template-data/sub2")
+	if err == nil {
+		t.Errorf("wanted  error got none")
+	}
+}
+
+func Test_NewTemplateCache_error_if_no_layout(t *testing.T) {
+	_, err := newTemplateCache("test-template-data/sub3")
+	if err == nil {
+		t.Errorf("wanted  error got none")
 	}
 }

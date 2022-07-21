@@ -1,0 +1,20 @@
+{{template "base" .}}
+
+{{define "title"}}Buchung #{{.Booking.ID}}{{end}}
+
+{{define "main"}}
+    {{with .Booking}}
+<div class='snippet'>
+    <div class='metadata'>
+        <strong>{{humanDate .StartDate}} - {{humanDate .EndDate}}</strong>
+        <span>#{{.ID}}</span>
+    </div>
+    <div class='metadata'>
+        <time>Von: {{humanDate .StartDate}}</time>
+        <time>Bis: {{humanDate .EndDate}}</time>
+    </div>
+    <pre><code>{{.Notes}}</code></pre>
+    <pre><code>{{.Customer.NameAnschrift}}</code></pre>
+</div>
+    {{end}}
+{{end}}

@@ -1,0 +1,59 @@
+{{define "bookingForm"}}
+
+        <label>Name Anschrift</label>
+        {{with .Errors.Get "nameAnschrift"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='nameAnschrift' value='{{.Get "nameAnschrift"}}'>
+
+        <label>Anzahl Gäste:</label>
+        {{with .Errors.Get "numberOfGuests"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='numberOfGuests' value='{{.Get "numberOfGuests"}}'>
+
+        <label>Von:</label>
+        {{with .Errors.Get "startDate"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='startDate' value='{{.Get "startDate"}}'>
+
+        <label>Bis:</label>
+        {{with .Errors.Get "endDate"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='endDate' value='{{.Get "endDate"}}'>
+
+        <label>Provider</label>
+        {{with .Errors.Get "provider"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='provider' value='{{.Get "provider"}}'>
+
+        <label>Preis pro Tag:</label>
+        {{with .Errors.Get "pricePerDay"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='pricePerDay' value='{{.Get "pricePerDay"}}'>
+
+        <label>Provision:</label>
+        {{with .Errors.Get "provision"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='provision' value='{{.Get "provision"}}'>
+
+        <label>Reinigungskosten:</label>
+        {{with .Errors.Get "cleaningPrice"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='cleaningPrice' value='{{.Get "cleaningPrice"}}'>
+
+        <label>Notes:</label>
+        {{with .Errors.Get "notes"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <div>
+            <textarea name="notes" rows="20" cols="80">{{.Get "notes"}}</textarea>
+        </div>
+
+{{end}}
