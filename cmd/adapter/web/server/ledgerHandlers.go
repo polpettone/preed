@@ -3,7 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
-	"github.com/polpettone/preed/cmd/adapter/web"
+	"github.com/polpettone/preed/cmd/adapter/web/server/templates"
 	"net/http"
 	"net/url"
 
@@ -13,7 +13,7 @@ import (
 )
 
 func (app *WebApp) CreateLedgerEntryForm(w http.ResponseWriter, r *http.Request) {
-	app.Render(w, r, "createLedgerEntry.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "createLedgerEntry.page.tmpl", &templates.TemplateData{
 		Form: forms.New(nil),
 	})
 }
@@ -40,7 +40,7 @@ func (app *WebApp) CreateLedgerEntry(w http.ResponseWriter, r *http.Request) {
 	form.MaxLength("notes", 100)
 
 	if !form.Valid() {
-		app.Render(w, r, "createLedgerEntry.page.tmpl", &web.TemplateData{Form: form})
+		app.Render(w, r, "createLedgerEntry.page.tmpl", &templates.TemplateData{Form: form})
 		return
 	}
 
@@ -76,7 +76,7 @@ func (app *WebApp) DeleteLedgerEntryForm(w http.ResponseWriter, r *http.Request)
 	form := forms.New(data)
 	form.Set("id", e.ID)
 
-	app.Render(w, r, "deleteLedgerEntry.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "deleteLedgerEntry.page.tmpl", &templates.TemplateData{
 		Form: form,
 	})
 }
@@ -116,7 +116,7 @@ func (app *WebApp) EditLedgerEntryForm(w http.ResponseWriter, r *http.Request) {
 
 	form := converter2.ConvertLedgerEntryToForm(*e)
 
-	app.Render(w, r, "editLedgerEntry.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "editLedgerEntry.page.tmpl", &templates.TemplateData{
 		Form: &form,
 	})
 }
@@ -139,7 +139,7 @@ func (app *WebApp) EditLedgerEntry(w http.ResponseWriter, r *http.Request) {
 	form.MaxLength("notes", 100)
 
 	if !form.Valid() {
-		app.Render(w, r, "editLedgerEntry.page.tmpl", &web.TemplateData{Form: form})
+		app.Render(w, r, "editLedgerEntry.page.tmpl", &templates.TemplateData{Form: form})
 		return
 	}
 
@@ -175,7 +175,7 @@ func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.Render(w, r, "ledgerEntries.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "ledgerEntries.page.tmpl", &templates.TemplateData{
 		LedgerEntries: ledgerEntries,
 	})
 }

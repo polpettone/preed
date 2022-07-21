@@ -3,7 +3,7 @@ package server
 import (
 	"crypto/tls"
 	"github.com/golangcollege/sessions"
-	"github.com/polpettone/preed/cmd/adapter/web"
+	"github.com/polpettone/preed/cmd/adapter/web/server/templates"
 	"github.com/polpettone/preed/cmd/config"
 	"github.com/polpettone/preed/cmd/core"
 	"html/template"
@@ -32,7 +32,7 @@ func StartWebAppServer(logging *config.Logging, bookingService *core.BookingServ
 	session.Lifetime = 12 * time.Hour
 	session.Secure = true
 
-	templateCache, err := web.NewTemplateCache("./ui/html/")
+	templateCache, err := templates.NewTemplateCache("./ui/html/")
 	if err != nil {
 		logging.ErrorLog.Fatal(err)
 	}

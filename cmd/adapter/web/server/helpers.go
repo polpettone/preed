@@ -3,7 +3,7 @@ package server
 import (
 	"bytes"
 	"fmt"
-	"github.com/polpettone/preed/cmd/adapter/web"
+	"github.com/polpettone/preed/cmd/adapter/web/server/templates"
 	"net/http"
 	"runtime/debug"
 	"time"
@@ -26,9 +26,9 @@ func (app *WebApp) NotFound(w http.ResponseWriter) {
 	app.ClientError(w, http.StatusNotFound)
 }
 
-func (app *WebApp) addDefaultData(td *web.TemplateData, r *http.Request) *web.TemplateData {
+func (app *WebApp) addDefaultData(td *templates.TemplateData, r *http.Request) *templates.TemplateData {
 	if td == nil {
-		td = &web.TemplateData{}
+		td = &templates.TemplateData{}
 	}
 	td.CSRFToken = nosurf.Token(r)
 	td.CurrentYear = time.Now().Year()
@@ -40,7 +40,7 @@ func (app *WebApp) addDefaultData(td *web.TemplateData, r *http.Request) *web.Te
 func (app *WebApp) Render(w http.ResponseWriter,
 	r *http.Request,
 	name string,
-	td *web.TemplateData) {
+	td *templates.TemplateData) {
 	ts, ok := app.TemplateCache[name]
 	if !ok {
 		app.ServerError(w, fmt.Errorf("The template %s does not exist", name))

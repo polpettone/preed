@@ -3,7 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
-	"github.com/polpettone/preed/cmd/adapter/web"
+	"github.com/polpettone/preed/cmd/adapter/web/server/templates"
 	"net/http"
 	"net/url"
 	"sort"
@@ -54,13 +54,13 @@ func (app *WebApp) CancelBookingForm(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(data)
 	form.Set("id", strconv.Itoa(int(b.ID)))
 
-	app.Render(w, r, "cancelBooking.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "cancelBooking.page.tmpl", &templates.TemplateData{
 		Form: form,
 	})
 }
 
 func (app *WebApp) CreateBookingForm(w http.ResponseWriter, r *http.Request) {
-	app.Render(w, r, "createBooking.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "createBooking.page.tmpl", &templates.TemplateData{
 		Form: forms.New(nil),
 	})
 }
@@ -90,7 +90,7 @@ func (app *WebApp) CreateBooking(w http.ResponseWriter, r *http.Request) {
 	form.IsNumber("numberOfGuests")
 
 	if !form.Valid() {
-		app.Render(w, r, "createBooking.page.tmpl", &web.TemplateData{Form: form})
+		app.Render(w, r, "createBooking.page.tmpl", &templates.TemplateData{Form: form})
 		return
 	}
 
@@ -130,7 +130,7 @@ func (app *WebApp) DeleteBookingForm(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(data)
 	form.Set("id", strconv.Itoa(int(b.ID)))
 
-	app.Render(w, r, "deleteBooking.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "deleteBooking.page.tmpl", &templates.TemplateData{
 		Form: form,
 	})
 }
@@ -177,7 +177,7 @@ func (app *WebApp) EditBookingForm(w http.ResponseWriter, r *http.Request) {
 
 	app.InfoLog.Printf("%v", form.Values)
 
-	app.Render(w, r, "editBooking.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "editBooking.page.tmpl", &templates.TemplateData{
 		Form: &form,
 	})
 }
@@ -206,7 +206,7 @@ func (app *WebApp) EditBooking(w http.ResponseWriter, r *http.Request) {
 	form.IsNumber("numberOfGuests")
 
 	if !form.Valid() {
-		app.Render(w, r, "editBooking.page.tmpl", &web.TemplateData{Form: form})
+		app.Render(w, r, "editBooking.page.tmpl", &templates.TemplateData{Form: form})
 		return
 	}
 
@@ -279,7 +279,7 @@ func (app *WebApp) ResetBookingCancellationForm(w http.ResponseWriter, r *http.R
 	form := forms.New(data)
 	form.Set("id", strconv.Itoa(int(b.ID)))
 
-	app.Render(w, r, "resetBookingCancellation.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "resetBookingCancellation.page.tmpl", &templates.TemplateData{
 		Form: form,
 	})
 }
@@ -296,7 +296,7 @@ func (app *WebApp) ShowBooking(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.Render(w, r, "booking.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "booking.page.tmpl", &templates.TemplateData{
 		Booking: *b,
 	})
 }
@@ -371,7 +371,7 @@ func (app *WebApp) ShowStatistics(w http.ResponseWriter, r *http.Request) {
 
 	statistics := app.BookingService.CalcBookingStatistics(bookings)
 
-	app.Render(w, r, "statistics.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "statistics.page.tmpl", &templates.TemplateData{
 		BookingStatistics: *statistics,
 	})
 }
@@ -387,7 +387,7 @@ func (app *WebApp) BookingOverview(w http.ResponseWriter, r *http.Request) {
 		return bookings[i].StartDate.Before(bookings[j].StartDate)
 	})
 
-	app.Render(w, r, "bookings.page.tmpl", &web.TemplateData{
+	app.Render(w, r, "bookings.page.tmpl", &templates.TemplateData{
 		Bookings: bookings,
 	})
 }
@@ -406,5 +406,5 @@ func (app *WebApp) UploadFileForBooking(w http.ResponseWriter, r *http.Request) 
 }
 
 func (app *WebApp) UploadFileForBookingForm(w http.ResponseWriter, r *http.Request) {
-	app.Render(w, r, "upload.page.tmpl", &web.TemplateData{})
+	app.Render(w, r, "upload.page.tmpl", &templates.TemplateData{})
 }
