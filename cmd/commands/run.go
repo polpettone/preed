@@ -2,7 +2,7 @@ package commands
 
 import (
 	"github.com/polpettone/preed/cmd/adapter/persistence"
-	"github.com/polpettone/preed/cmd/adapter/web"
+	"github.com/polpettone/preed/cmd/adapter/web/server"
 	"github.com/polpettone/preed/cmd/config"
 	"github.com/polpettone/preed/cmd/core"
 	"github.com/spf13/cobra"
@@ -45,7 +45,7 @@ func (app *Application) handleRunCommand() {
 		app.Logging.ErrorLog.Printf("%s", err)
 	}
 
-	web.StartWebAppServer(app.Logging, bookingService)
+	server.StartWebAppServer(app.Logging, bookingService)
 }
 
 func init() {

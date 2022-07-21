@@ -1,8 +1,9 @@
-package web
+package server
 
 import (
 	"errors"
 	"fmt"
+	"github.com/polpettone/preed/cmd/adapter/web"
 	"net/http"
 	"net/url"
 
@@ -12,7 +13,7 @@ import (
 )
 
 func (app *WebApp) CreateLedgerEntryForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "createLedgerEntry.page.tmpl", &templateData{
+	app.Render(w, r, "createLedgerEntry.page.tmpl", &web.TemplateData{
 		Form: forms.New(nil),
 	})
 }
@@ -21,7 +22,7 @@ func (app *WebApp) CreateLedgerEntry(w http.ResponseWriter, r *http.Request) {
 
 	app.InfoLog.Printf("%s", "Create Ledger Entry")
 
-	err := parseForm(w, r, app)
+	err := ParseForm(w, r, app)
 	if err != nil {
 		return
 	}
@@ -39,7 +40,7 @@ func (app *WebApp) CreateLedgerEntry(w http.ResponseWriter, r *http.Request) {
 	form.MaxLength("notes", 100)
 
 	if !form.Valid() {
-		app.render(w, r, "createLedgerEntry.page.tmpl", &templateData{Form: form})
+		app.Render(w, r, "createLedgerEntry.page.tmpl", &web.TemplateData{Form: form})
 		return
 	}
 
@@ -75,14 +76,14 @@ func (app *WebApp) DeleteLedgerEntryForm(w http.ResponseWriter, r *http.Request)
 	form := forms.New(data)
 	form.Set("id", e.ID)
 
-	app.render(w, r, "deleteLedgerEntry.page.tmpl", &templateData{
+	app.Render(w, r, "deleteLedgerEntry.page.tmpl", &web.TemplateData{
 		Form: form,
 	})
 }
 
 func (app *WebApp) DeleteLedgerEntry(w http.ResponseWriter, r *http.Request) {
 
-	err := parseForm(w, r, app)
+	err := ParseForm(w, r, app)
 	if err != nil {
 		return
 	}
@@ -99,7 +100,7 @@ func (app *WebApp) DeleteLedgerEntry(w http.ResponseWriter, r *http.Request) {
 
 	err = app.BookingService.Repo.DeleteLedgerEntry(e)
 	if err != nil {
-		app.serverError(w, err)
+		app.ServerError(w, err)
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/ledger"), http.StatusSeeOther)
@@ -115,14 +116,14 @@ func (app *WebApp) EditLedgerEntryForm(w http.ResponseWriter, r *http.Request) {
 
 	form := converter2.ConvertLedgerEntryToForm(*e)
 
-	app.render(w, r, "editLedgerEntry.page.tmpl", &templateData{
+	app.Render(w, r, "editLedgerEntry.page.tmpl", &web.TemplateData{
 		Form: &form,
 	})
 }
 
 func (app *WebApp) EditLedgerEntry(w http.ResponseWriter, r *http.Request) {
 
-	err := parseForm(w, r, app)
+	err := ParseForm(w, r, app)
 	if err != nil {
 		return
 	}
@@ -138,7 +139,7 @@ func (app *WebApp) EditLedgerEntry(w http.ResponseWriter, r *http.Request) {
 	form.MaxLength("notes", 100)
 
 	if !form.Valid() {
-		app.render(w, r, "editLedgerEntry.page.tmpl", &templateData{Form: form})
+		app.Render(w, r, "editLedgerEntry.page.tmpl", &web.TemplateData{Form: form})
 		return
 	}
 
@@ -174,7 +175,7 @@ func (app *WebApp) ShowLedger(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "ledgerEntries.page.tmpl", &templateData{
+	app.Render(w, r, "ledgerEntries.page.tmpl", &web.TemplateData{
 		LedgerEntries: ledgerEntries,
 	})
 }
@@ -183,9 +184,9 @@ func getLedgerEntryByID(w http.ResponseWriter, id string, app *WebApp) (*models.
 	b, err := app.BookingService.Repo.FindLedgerEntryByID(id)
 	if err != nil {
 		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
+			app.NotFound(w)
 		} else {
-			app.serverError(w, err)
+			app.ServerError(w, err)
 		}
 		return nil, err
 	}

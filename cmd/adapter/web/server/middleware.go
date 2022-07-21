@@ -1,4 +1,4 @@
-package web
+package server
 
 import (
 	"fmt"
@@ -7,12 +7,12 @@ import (
 	"github.com/justinas/nosurf"
 )
 
-func (app *WebApp) recoverPanic(next http.Handler) http.Handler {
+func (app *WebApp) RecoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {
 				w.Header().Set("Connection", "close")
-				app.serverError(w, fmt.Errorf("%s", err))
+				app.ServerError(w, fmt.Errorf("%s", err))
 			}
 		}()
 		next.ServeHTTP(w, r)
@@ -46,4 +46,3 @@ func noSurf(next http.Handler) http.Handler {
 	})
 	return csrfHandler
 }
-

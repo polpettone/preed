@@ -10,7 +10,7 @@ import (
 	"github.com/polpettone/preed/pkg/forms"
 )
 
-type templateData struct {
+type TemplateData struct {
 	CSRFToken         string
 	CurrentYear       int
 	Flash             string
@@ -38,7 +38,7 @@ var functions = template.FuncMap{
 	"displayMoney": displayMoney,
 }
 
-func newTemplateCache(dir string) (map[string]*template.Template, error) {
+func NewTemplateCache(dir string) (map[string]*template.Template, error) {
 
 	cache := map[string]*template.Template{}
 

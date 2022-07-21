@@ -1,4 +1,4 @@
-package web
+package server
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 )
 
 func (app *WebApp) routes() http.Handler {
-	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
+	standardMiddleware := alice.New(app.RecoverPanic, app.logRequest, secureHeaders)
 
 	dynamicMiddleware := alice.New(app.Session.Enable, noSurf)
 

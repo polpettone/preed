@@ -1,8 +1,9 @@
-package web
+package server
 
 import (
 	"errors"
 	"fmt"
+	"github.com/polpettone/preed/cmd/adapter/web"
 	"net/http"
 	"net/url"
 	"sort"
@@ -14,8 +15,7 @@ import (
 )
 
 func (app *WebApp) CancelBooking(w http.ResponseWriter, r *http.Request) {
-
-	err := parseForm(w, r, app)
+	err := ParseForm(w, r, app)
 	if err != nil {
 		return
 	}
@@ -32,7 +32,7 @@ func (app *WebApp) CancelBooking(w http.ResponseWriter, r *http.Request) {
 
 	err = app.BookingService.CancelBooking(b)
 	if err != nil {
-		app.serverError(w, err)
+		app.ServerError(w, err)
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/bookings?year=2021"), http.StatusSeeOther)
@@ -41,7 +41,7 @@ func (app *WebApp) CancelBooking(w http.ResponseWriter, r *http.Request) {
 func (app *WebApp) CancelBookingForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
-		app.notFound(w)
+		app.NotFound(w)
 		return
 	}
 
@@ -54,20 +54,20 @@ func (app *WebApp) CancelBookingForm(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(data)
 	form.Set("id", strconv.Itoa(int(b.ID)))
 
-	app.render(w, r, "cancelBooking.page.tmpl", &templateData{
+	app.Render(w, r, "cancelBooking.page.tmpl", &web.TemplateData{
 		Form: form,
 	})
 }
 
 func (app *WebApp) CreateBookingForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "createBooking.page.tmpl", &templateData{
+	app.Render(w, r, "createBooking.page.tmpl", &web.TemplateData{
 		Form: forms.New(nil),
 	})
 }
 
 func (app *WebApp) CreateBooking(w http.ResponseWriter, r *http.Request) {
 
-	err := parseForm(w, r, app)
+	err := ParseForm(w, r, app)
 	if err != nil {
 		return
 	}
@@ -90,7 +90,7 @@ func (app *WebApp) CreateBooking(w http.ResponseWriter, r *http.Request) {
 	form.IsNumber("numberOfGuests")
 
 	if !form.Valid() {
-		app.render(w, r, "createBooking.page.tmpl", &templateData{Form: form})
+		app.Render(w, r, "createBooking.page.tmpl", &web.TemplateData{Form: form})
 		return
 	}
 
@@ -117,7 +117,7 @@ func (app *WebApp) CreateBooking(w http.ResponseWriter, r *http.Request) {
 func (app *WebApp) DeleteBookingForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
-		app.notFound(w)
+		app.NotFound(w)
 		return
 	}
 
@@ -130,14 +130,14 @@ func (app *WebApp) DeleteBookingForm(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(data)
 	form.Set("id", strconv.Itoa(int(b.ID)))
 
-	app.render(w, r, "deleteBooking.page.tmpl", &templateData{
+	app.Render(w, r, "deleteBooking.page.tmpl", &web.TemplateData{
 		Form: form,
 	})
 }
 
 func (app *WebApp) DeleteBooking(w http.ResponseWriter, r *http.Request) {
 
-	err := parseForm(w, r, app)
+	err := ParseForm(w, r, app)
 	if err != nil {
 		return
 	}
@@ -154,7 +154,7 @@ func (app *WebApp) DeleteBooking(w http.ResponseWriter, r *http.Request) {
 
 	err = app.BookingService.DeleteBooking(b)
 	if err != nil {
-		app.serverError(w, err)
+		app.ServerError(w, err)
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/bookings?year=2021"), http.StatusSeeOther)
@@ -163,7 +163,7 @@ func (app *WebApp) DeleteBooking(w http.ResponseWriter, r *http.Request) {
 func (app *WebApp) EditBookingForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
-		app.notFound(w)
+		app.NotFound(w)
 		return
 	}
 
@@ -177,14 +177,14 @@ func (app *WebApp) EditBookingForm(w http.ResponseWriter, r *http.Request) {
 
 	app.InfoLog.Printf("%v", form.Values)
 
-	app.render(w, r, "editBooking.page.tmpl", &templateData{
+	app.Render(w, r, "editBooking.page.tmpl", &web.TemplateData{
 		Form: &form,
 	})
 }
 
 func (app *WebApp) EditBooking(w http.ResponseWriter, r *http.Request) {
 
-	err := parseForm(w, r, app)
+	err := ParseForm(w, r, app)
 	if err != nil {
 		return
 	}
@@ -206,7 +206,7 @@ func (app *WebApp) EditBooking(w http.ResponseWriter, r *http.Request) {
 	form.IsNumber("numberOfGuests")
 
 	if !form.Valid() {
-		app.render(w, r, "editBooking.page.tmpl", &templateData{Form: form})
+		app.Render(w, r, "editBooking.page.tmpl", &web.TemplateData{Form: form})
 		return
 	}
 
@@ -240,7 +240,7 @@ func (app *WebApp) EditBooking(w http.ResponseWriter, r *http.Request) {
 
 func (app *WebApp) ResetBookingCancellation(w http.ResponseWriter, r *http.Request) {
 
-	err := parseForm(w, r, app)
+	err := ParseForm(w, r, app)
 	if err != nil {
 		return
 	}
@@ -257,7 +257,7 @@ func (app *WebApp) ResetBookingCancellation(w http.ResponseWriter, r *http.Reque
 
 	err = app.BookingService.ResetCancellationOfBooking(b)
 	if err != nil {
-		app.serverError(w, err)
+		app.ServerError(w, err)
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/bookings?year=2021"), http.StatusSeeOther)
@@ -266,7 +266,7 @@ func (app *WebApp) ResetBookingCancellation(w http.ResponseWriter, r *http.Reque
 func (app *WebApp) ResetBookingCancellationForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
-		app.notFound(w)
+		app.NotFound(w)
 		return
 	}
 
@@ -279,7 +279,7 @@ func (app *WebApp) ResetBookingCancellationForm(w http.ResponseWriter, r *http.R
 	form := forms.New(data)
 	form.Set("id", strconv.Itoa(int(b.ID)))
 
-	app.render(w, r, "resetBookingCancellation.page.tmpl", &templateData{
+	app.Render(w, r, "resetBookingCancellation.page.tmpl", &web.TemplateData{
 		Form: form,
 	})
 }
@@ -287,7 +287,7 @@ func (app *WebApp) ResetBookingCancellationForm(w http.ResponseWriter, r *http.R
 func (app *WebApp) ShowBooking(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
-		app.notFound(w)
+		app.NotFound(w)
 		return
 	}
 
@@ -296,7 +296,7 @@ func (app *WebApp) ShowBooking(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "booking.page.tmpl", &templateData{
+	app.Render(w, r, "booking.page.tmpl", &web.TemplateData{
 		Booking: *b,
 	})
 }
@@ -309,9 +309,9 @@ func getBookingByID(w http.ResponseWriter, bookingID int64, app *WebApp) (*model
 	b, err := app.BookingService.GetBookingById(bookingID)
 	if err != nil {
 		if errors.Is(err, ErrNoRecord) {
-			app.notFound(w)
+			app.NotFound(w)
 		} else {
-			app.serverError(w, err)
+			app.ServerError(w, err)
 		}
 		return nil, err
 	}
@@ -324,7 +324,7 @@ func getBookingIDFromForm(w http.ResponseWriter, r *http.Request, app *WebApp) (
 	if form.Get("id") != "" {
 		id, err := strconv.Atoi(form.Get("id"))
 		if err != nil {
-			app.notFound(w)
+			app.NotFound(w)
 			return nil, err
 		}
 		bookingId = int64(id)
@@ -340,7 +340,7 @@ func getBookingsForYear(w http.ResponseWriter, r *http.Request, app *WebApp) ([]
 	if year == "" {
 		foundBookings, err := app.BookingService.GetAllBookings()
 		if err != nil {
-			app.serverError(w, err)
+			app.ServerError(w, err)
 			return nil, err
 		}
 		bookings = foundBookings
@@ -351,7 +351,7 @@ func getBookingsForYear(w http.ResponseWriter, r *http.Request, app *WebApp) ([]
 		} else {
 			foundBookings, err := app.BookingService.GetAllBookingsForYear(yearInt)
 			if err != nil {
-				app.serverError(w, err)
+				app.ServerError(w, err)
 				return nil, err
 			}
 			bookings = foundBookings
@@ -371,7 +371,7 @@ func (app *WebApp) ShowStatistics(w http.ResponseWriter, r *http.Request) {
 
 	statistics := app.BookingService.CalcBookingStatistics(bookings)
 
-	app.render(w, r, "statistics.page.tmpl", &templateData{
+	app.Render(w, r, "statistics.page.tmpl", &web.TemplateData{
 		BookingStatistics: *statistics,
 	})
 }
@@ -387,7 +387,7 @@ func (app *WebApp) BookingOverview(w http.ResponseWriter, r *http.Request) {
 		return bookings[i].StartDate.Before(bookings[j].StartDate)
 	})
 
-	app.render(w, r, "bookings.page.tmpl", &templateData{
+	app.Render(w, r, "bookings.page.tmpl", &web.TemplateData{
 		Bookings: bookings,
 	})
 }
@@ -406,5 +406,5 @@ func (app *WebApp) UploadFileForBooking(w http.ResponseWriter, r *http.Request) 
 }
 
 func (app *WebApp) UploadFileForBookingForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "upload.page.tmpl", &templateData{})
+	app.Render(w, r, "upload.page.tmpl", &web.TemplateData{})
 }
